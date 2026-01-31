@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pacific Green Partners, LLP | Expert CPA & Sustainability Advisory in California</title>
+  <meta name="description" content="Licensed CPA firm specializing in audit, tax preparation, financial advisory, and sustainability consulting in California. Trusted by businesses and individuals since 2015. Free initial consultation."/>
+  <meta name="keywords" content="CPA Los Angeles, tax preparation California, sustainability advisory, audit services, business consulting, ESG reporting"/>
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:title" content="Pacific Green Partners, LLP — Professional CPA & Sustainability Advisory"/>
+  <meta property="og:description" content="Helping businesses achieve financial excellence and environmental sustainability with integrated CPA and ESG advisory services."/>
+  <meta property="og:image" content="https://pacificgreenpartners.com/images/og-image.jpg"/>
+  <meta property="og:url" content="https://pacificgreenpartners.com"/>
+  <meta property="og:type" content="website"/>
+
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+
+  <style>
+    :root {
+      --primary: #2e7d32; /* Green color for sustainability theme */
+      --primary-dark: #1b5e20;
+      --secondary: #0d6efd; /* Blue for accent */
+      --dark: #0e1117;
+      --gray: #495057;
+      --light: #f8f9fa;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--light);
+      color: #212529;
+      line-height: 1.6;
+    }
+    .hero {
+      background: linear-gradient(rgba(46, 125, 50, 0.25), rgba(46, 125, 50, 0.1)), url('https://images.unsplash.com/photo-1554224155-6726b3ff5e83?auto=format&fit=crop&q=80&w=2400') center/cover no-repeat;
+      color: white;
+      padding: 180px 0 140px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .navbar {
+      background-color: rgba(255,255,255,0.98) !important;
+      backdrop-filter: blur(8px);
+    }
+    .service-card {
+      transition: all 0.35s ease;
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .service-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
+    .testimonial {
+      background: white;
+      border-radius: 12px;
+      border-left: 5px solid var(--primary);
+      padding: 1.75rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    footer {
+      background: var(--dark);
+      color: #adb5bd;
+      padding: 80px 0 40px;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      padding: 0.75rem 1.75rem;
+      border-radius: 50px;
+      font-weight: 600;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+    .btn-outline-primary {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-outline-primary:hover {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    .trust-badge {
+      font-size: 1.1rem;
+      padding: 1rem 1.5rem;
+      border-radius: 10px;
+    }
+    @media (max-width: 767px) {
+      .hero { padding: 120px 0 80px; }
+    }
+  </style>
+
+  <!-- Basic Schema.org LocalBusiness (SEO) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AccountingService",
+    "name": "Pacific Green Partners, LLP",
+    "url": "https://pacificgreenpartners.com",
+    "logo": "https://pacificgreenpartners.com/images/logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Financial District Blvd",
+      "addressLocality": "Los Angeles",
+      "addressRegion": "CA",
+      "postalCode": "90012",
+      "addressCountry": "US"
+    },
+    "telephone": "+1-213-555-0123",
+    "priceRange": "$$",
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+      "opens": "09:00",
+      "closes": "17:00"
+    },
+    "sameAs": [
+      "https://www.linkedin.com/company/pacificgreenpartners",
+      "https://www.facebook.com/pacificgreenpartners",
+      "https://www.instagram.com/pacificgreenpartners"
+    ]
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light shadow-sm fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4" href="#">
+        <i class="bi bi-tree-fill text-success me-2"></i>Pacific Green Partners, LLP
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sustainability">Sustainability</a></li>
+          <li class="nav-item"><a class="nav-link" href="#resources">Insights</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+          <li class="nav-item ms-3">
+           <a href="{{ url_for('portal') }}" class="btn btn-outline-primary rounded-pill">Client Portal</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero text-center">
+    <div class="container">
+      <h1 class="display-3 fw-bold mb-4">CPA Excellence Meets<br>Sustainability Advisory</h1>
+      <p class="lead fs-4 mb-5">Integrating traditional accounting expertise with ESG consulting<br>to help businesses thrive financially and environmentally</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="#contact" class="btn btn-primary btn-lg px-5">Free Initial Consultation</a>
+        <a href="tel:+12135550123" class="btn btn-outline-light btn-lg px-5">Call (213) 555-0123</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <section class="py-5 bg-white border-bottom">
+    <div class="container">
+      <div class="row text-center g-4 justify-content-center">
+        <div class="col-md-3">
+          <div class="trust-badge border bg-light">
+            <strong>CPA Licensed in CA</strong><br>License # 123456
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="trust-badge border bg-light">
+            <strong>AICPA Member</strong><br>Since 2015
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="trust-badge border bg-light">
+            <strong>ESG Certified</strong><br>Sustainability Advisory
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="trust-badge border bg-light">
+            <strong>BBB Accredited</strong><br>A+ Rating
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Integrated CPA & Sustainability Services</h2>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center p-4">
+            <i class="bi bi-shield-check-fill display-4" style="color: #2e7d32;"></i>
+            <h4>Audit & Assurance</h4>
+            <p>Financial statement audits, reviews, compilations, SOC reports, with integrated ESG compliance reporting.</p>
+            <a href="#contact" class="btn btn-outline-primary btn-sm mt-2">Get Audit Quote</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center p-4">
+            <i class="bi bi-calculator-fill display-4" style="color: #2e7d32;"></i>
+            <h4>Tax & Sustainability Credits</h4>
+            <p>Tax planning, compliance, IRS representation plus green energy credits, carbon credit optimization, and ESG incentives.</p>
+            <a href="#contact" class="btn btn-outline-primary btn-sm mt-2">Tax Strategy Session</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center p-4">
+            <i class="bi bi-graph-up-arrow display-4" style="color: #2e7d32;"></i>
+            <h4>ESG Financial Advisory</h4>
+            <p>Sustainable investing analysis, ESG reporting, carbon accounting, and green financial strategy integration.</p>
+            <a href="#contact" class="btn btn-outline-primary btn-sm mt-2">Financial Review</a>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card service-card h-100 text-center p-4">
+            <i class="bi bi-tree-fill display-4" style="color: #2e7d32;"></i>
+            <h4>Sustainability Consulting</h4>
+            <p>ESG compliance, sustainability reporting (GRI, SASB), carbon footprint analysis, green business certification.</p>
+            <a href="#contact" class="btn btn-outline-primary btn-sm mt-2">Consult Today</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-5 bg-light">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6 order-lg-2">
+          <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=2400" alt="Professional CPA team working together" class="img-fluid rounded-3 shadow-lg"/>
+        </div>
+        <div class="col-lg-6">
+          <h2>Why Choose Pacific Green Partners?</h2>
+          <p class="lead">We bridge the gap between financial excellence and environmental responsibility, offering integrated solutions for the modern business.</p>
+          <ul class="list-unstyled fs-5">
+            <li class="mb-3"><i class="bi bi-check-circle-fill" style="color: #2e7d32;"></i> Dual expertise in traditional CPA services and ESG advisory</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill" style="color: #2e7d32;"></i> Maximize green tax credits and sustainability incentives</li>
+            <li class="mb-3"><i class="bi bi-check-circle-fill" style="color: #2e7d32;"></i> Integrated reporting combining financial and ESG metrics</li>
+            <li><i class="bi bi-check-circle-fill" style="color: #2e7d32;"></i> Future-proof your business with sustainable financial strategies</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sustainability Section -->
+  <section id="sustainability" class="py-5">
+    <div class="container text-center">
+      <h2 class="mb-4">Our Sustainability Commitment</h2>
+      <p class="lead text-muted mb-5">As a certified B Corp candidate, we practice what we preach</p>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-recycle display-4 mb-3" style="color: #2e7d32;"></i>
+              <h5>Carbon Neutral Operations</h5>
+              <p>100% renewable energy powered office with comprehensive carbon offset program.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-people-fill display-4 mb-3" style="color: #2e7d32;"></i>
+              <h5>Pro Bono ESG Consulting</h5>
+              <p>10% of our consulting hours dedicated to non-profits and community organizations.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+              <i class="bi bi-file-earmark-text display-4 mb-3" style="color: #2e7d32;"></i>
+              <h5>Transparent Reporting</h5>
+              <p>Annual sustainability report detailing our environmental and social impact.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Teaser -->
+  <section id="team" class="py-5 bg-light">
+    <div class="container text-center">
+      <h2>Meet Your Advisors</h2>
+      <p class="lead mb-5 text-muted">CPA expertise with sustainability specialization</p>
+      <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1556155092-490a1ba16284?auto=format&fit=crop&q=80&w=800" class="card-img-top rounded-circle mx-auto mt-4" style="width:140px;height:140px;object-fit:cover;" alt="Michael Chen CPA"/>
+            <div class="card-body">
+              <h5>Michael Chen, CPA, ESG</h5>
+              <p class="text-muted">Managing Partner<br>18+ years • ESG Integration Expert</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=800" class="card-img-top rounded-circle mx-auto mt-4" style="width:140px;height:140px;object-fit:cover;" alt="Sarah Johnson CPA"/>
+            <div class="card-body">
+              <h5>Sarah Johnson, CPA</h5>
+              <p class="text-muted">Tax & Sustainability Director<br>15+ years • Green Credit Specialist</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card border-0 shadow-sm">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" class="card-img-top rounded-circle mx-auto mt-4" style="width:140px;height:140px;object-fit:cover;" alt="David Park CPA"/>
+            <div class="card-body">
+              <h5>David Park, CPA, CMA</h5>
+              <p class="text-muted">ESG Advisory Lead<br>12+ years • Carbon Accounting</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="#contact" class="btn btn-primary mt-4">Work With Our Team</a>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">Client Success Stories</h2>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="testimonial">
+            <p>"Pacific Green Partners not only saved us $85,000 in taxes but helped us secure $120,000 in green energy credits. Their dual expertise is invaluable."</p>
+            <p class="fw-bold mb-0">— Robert M., Renewable Energy CEO</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial">
+            <p>"Finally found a CPA firm that understands both our financial needs and our sustainability mission. Their ESG reporting guidance was exceptional."</p>
+            <p class="fw-bold mb-0">— Jennifer L., Sustainable Fashion Brand</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial">
+            <p>"They helped us transition to carbon neutral operations while improving our bottom line. The integrated approach actually increased our profitability."</p>
+            <p class="fw-bold mb-0">— Thomas R., Manufacturing Company Owner</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="testimonial">
+            <p>"Expert guidance on ESG compliance while handling our complex multi-state tax filings. One-stop solution for modern business needs."</p>
+            <p class="fw-bold mb-0">— Maria S., Tech Startup Founder</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-5">Sustainability & Tax Insights</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+              <h5>2026 Green Tax Credits Guide</h5>
+              <p class="text-muted">Complete overview of federal and California incentives for sustainable businesses.</p>
+              <a href="/blog/green-tax-credits-2026" class="btn btn-outline-primary btn-sm">Download Guide</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+              <h5>ESG Reporting: Financial Implications</h5>
+              <p class="text-muted">How sustainability reporting affects valuation, taxes, and investor relations.</p>
+              <a href="/blog/esg-financial-implications" class="btn btn-outline-primary btn-sm">Read Whitepaper</a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body">
+              <h5>Carbon Accounting for Businesses</h5>
+              <p class="text-muted">Step-by-step guide to measuring and reporting your carbon footprint.</p>
+              <a href="/blog/carbon-accounting-guide" class="btn btn-outline-primary btn-sm">Get Toolkit</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center mb-5">Begin Your Green Financial Journey</h2>
+      <div class="row g-5">
+        <div class="col-lg-6">
+          <h4>Send Us a Message</h4>
+          <form method="POST" action="{{ url_for('index') }}">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            
+            <!-- Honeypot field for spam protection -->
+            <input type="text" name="honeypot" style="display:none;">
+            
+            <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" name="name" required/>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label">Business / Personal Email</label>
+              <input type="email" class="form-control" id="email" name="email" required/>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="phone" name="phone"/>
+            </div>
+            <div class="mb-3">
+              <label for="service" class="form-label">Service Needed</label>
+              <select class="form-select" id="service" name="service">
+                <option value="">Select a service</option>
+                <option value="tax">Tax & Sustainability Credits</option>
+                <option value="audit">Audit & ESG Assurance</option>
+                <option value="advisory">ESG Financial Advisory</option>
+                <option value="consulting">Sustainability Consulting</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="message" class="form-label">How can we help you?</label>
+              <textarea class="form-control" id="message" name="message" rows="5" required placeholder="Tell us about your financial and sustainability goals..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-100">Submit Request</button>
+          </form>
+        </div>
+
+        <div class="col-lg-6">
+          <h4>Schedule a Free Consultation</h4>
+          <!-- Calendly -->
+          <div class="calendly-inline-widget mb-4" data-url="https://calendly.com/pacificgreenpartners/30min-consult" style="min-width:320px;height:630px;"></div>
+          <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
+          <h4 class="mt-5">Our Office</h4>
+          <address class="mb-4">
+            <strong>Pacific Green Partners, LLP</strong><br>
+            123 Financial District Blvd<br>
+            Los Angeles, CA 90012<br>
+            <i class="bi bi-telephone me-2"></i> (213) 555-0123<br>
+            <i class="bi bi-envelope me-2"></i> info@pacificgreenpartners.com
+          </address>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3305.748094241835!2d-118.243683!3d34.052235!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c7b85a3b0a67%3A0x8c1b7b5c0b5b5b5b!2sFinancial%20District%2C%20Los%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1648765432100!5m2!1sen!2sus" width="100%" height="300" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-lg-start">
+    <div class="container">
+      <div class="row py-5">
+        <div class="col-lg-4 mb-4">
+          <h5><i class="bi bi-tree-fill me-2"></i>Pacific Green Partners, LLP</h5>
+          <p>Financial Excellence. Environmental Responsibility.<br>Licensed in California • AICPA Member • B Corp Candidate</p>
+          <div class="mt-3">
+            <a href="https://www.linkedin.com/company/pacificgreenpartners" class="text-reset me-3"><i class="bi bi-linkedin fs-5"></i></a>
+            <a href="https://www.facebook.com/pacificgreenpartners" class="text-reset me-3"><i class="bi bi-facebook fs-5"></i></a>
+            <a href="https://www.instagram.com/pacificgreenpartners" class="text-reset"><i class="bi bi-instagram fs-5"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#services" class="text-reset">Services</a></li>
+            <li><a href="#sustainability" class="text-reset">Our Sustainability Commitment</a></li>
+            <li><a href="/privacy-policy" class="text-reset">Privacy Policy</a></li>
+            <li><a href="/terms" class="text-reset">Terms of Use</a></li>
+            <li><a href="https://clients.pacificgreenpartners.com" class="text-reset">Secure Client Portal</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4 mb-4">
+          <h5>Contact</h5>
+          <p><i class="bi bi-telephone-fill me-2"></i> (213) 555-0123<br>
+             <i class="bi bi-envelope-fill me-2"></i> info@pacificgreenpartners.com<br>
+             <i class="bi bi-geo-alt-fill me-2"></i> Los Angeles, CA</p>
+          <p class="small">
+            <strong>Office Hours:</strong><br>
+            Mon-Fri: 9:00 AM - 5:00 PM PST<br>
+            By appointment only
+          </p>
+        </div>
+      </div>
+      <hr class="bg-light opacity-25"/>
+      <p class="py-4 mb-0">© 2026 Pacific Green Partners, LLP. All rights reserved. CPA services provided by licensed professionals.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

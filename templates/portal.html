@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Client Portal | Pacific Green Partners, LLP</title>
+  
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <!-- Chart.js for dashboard charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    :root {
+      --primary: #2e7d32;
+      --primary-dark: #1b5e20;
+      --secondary: #0d6efd;
+      --light-bg: #f8f9fa;
+      --sidebar-width: 280px;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background-color: #f5f7fa;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      height: 100vh;
+      position: fixed;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    
+    .sidebar .nav-link {
+      color: rgba(255, 255, 255, 0.85);
+      padding: 0.75rem 1.5rem;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .sidebar .nav-link:hover,
+    .sidebar .nav-link.active {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      border-left-color: white;
+    }
+    
+    .sidebar .nav-link i {
+      width: 24px;
+      text-align: center;
+      margin-right: 10px;
+    }
+    
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Main Content */
+    .main-content {
+      margin-left: var(--sidebar-width);
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        margin-left: -280px;
+      }
+      .sidebar.active {
+        margin-left: 0;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .main-content.active {
+        margin-left: 280px;
+      }
+    }
+    
+    /* Dashboard Cards */
+    .dashboard-card {
+      border: none;
+      border-radius: 12px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    .card-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+    }
+    
+    .card-secondary {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      color: white;
+    }
+    
+    .card-success {
+      background: linear-gradient(135deg, #198754 0%, #0d6e3d 100%);
+      color: white;
+    }
+    
+    .card-info {
+      background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+      color: white;
+    }
+    
+    /* File Upload */
+    .file-upload-area {
+      border: 3px dashed #dee2e6;
+      border-radius: 12px;
+      padding: 3rem;
+      text-align: center;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .file-upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(46, 125, 50, 0.05);
+    }
+    
+    /* Task List */
+    .task-item {
+      padding: 1rem;
+      border-left: 4px solid transparent;
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+    
+    .task-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .task-item.high {
+      border-left-color: #dc3545;
+    }
+    
+    .task-item.medium {
+      border-left-color: #ffc107;
+    }
+    
+    .task-item.low {
+      border-left-color: #6c757d;
+    }
+    
+    /* Progress Bars */
+    .progress {
+      height: 10px;
+      border-radius: 5px;
+    }
+    
+    /* Message Thread */
+    .message {
+      padding: 1rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      max-width: 80%;
+    }
+    
+    .message.sent {
+      background: #e3f2fd;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .message.received {
+      background: #f8f9fa;
+      margin-right: auto;
+      border-bottom-left-radius: 4px;
+    }
+    
+    /* Mobile Toggle Button */
+    .sidebar-toggle {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 999;
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar-toggle {
+        display: block;
+      }
+    }
+    
+    /* Status Badges */
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .status-complete {
+      background: rgba(25, 135, 84, 0.1);
+      color: #198754;
+    }
+    
+    .status-pending {
+      background: rgba(255, 193, 7, 0.1);
+      color: #ffc107;
+    }
+    
+    .status-overdue {
+      background: rgba(220, 53, 69, 0.1);
+      color: #dc3545;
+    }
+    
+    .status-inprogress {
+      background: rgba(13, 110, 253, 0.1);
+      color: #0d6efd;
+    }
+    
+    /* Document Table */
+    .document-table tr {
+      transition: background 0.2s;
+    }
+    
+    .document-table tr:hover {
+      background: rgba(46, 125, 50, 0.05);
+    }
+    
+    /* Tax Calculator */
+    .tax-input-group {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      border: 1px solid #dee2e6;
+    }
+    
+    .tax-result {
+      background: linear-gradient(135deg, #198754 0%, #0d6e3d 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Toggle Button -->
+  <button class="btn btn-primary sidebar-toggle" id="sidebarToggle">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-tree-fill fs-3 me-3"></i>
+        <div>
+          <h5 class="mb-0">Pacific Green Partners</h5>
+          <small class="opacity-75">Client Portal</small>
+        </div>
+      </div>
+    </div>
+    
+    <div class="d-flex flex-column h-100">
+      <!-- User Info -->
+      <div class="p-3 border-bottom border-opacity-10">
+        <div class="d-flex align-items-center">
+          <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+            <i class="bi bi-person-fill fs-4"></i>
+          </div>
+          <div class="ms-3">
+            <h6 class="mb-0">John Smith</h6>
+            <small class="opacity-75">ABC Manufacturing Inc.</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="flex-grow-1 p-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link active" href="#dashboard">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#documents">
+              <i class="bi bi-folder-fill"></i> Documents
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#tax">
+              <i class="bi bi-calculator-fill"></i> Tax Center
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#messages">
+              <i class="bi bi-chat-left-text-fill"></i> Messages
+              <span class="badge bg-danger float-end">3</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#tasks">
+              <i class="bi bi-check-circle-fill"></i> Tasks
+              <span class="badge bg-warning float-end">5</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#esg">
+              <i class="bi bi-tree-fill"></i> ESG Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#billing">
+              <i class="bi bi-credit-card-fill"></i> Billing
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#reports">
+              <i class="bi bi-bar-chart-fill"></i> Reports
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#calendar">
+              <i class="bi bi-calendar-fill"></i> Calendar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#support">
+              <i class="bi bi-headset"></i> Support
+            </a>
+          </li>
+        </ul>
+        
+        <!-- Quick Actions -->
+        <div class="mt-4 pt-3 border-top border-opacity-10">
+          <h6 class="text-uppercase opacity-75 mb-3">Quick Actions</h6>
+          <button class="btn btn-outline-light w-100 mb-2">
+            <i class="bi bi-upload me-2"></i> Upload Document
+          </button>
+          <button class="btn btn-outline-light w-100 mb-2">
+            <i class="bi bi-calendar-plus me-2"></i> Schedule Meeting
+          </button>
+          <button class="btn btn-outline-light w-100">
+            <i class="bi bi-question-circle me-2"></i> Help Center
+          </button>
+        </div>
+      </nav>
+      
+      <!-- Footer -->
+      <div class="p-3 border-top border-opacity-10">
+        <div class="d-flex justify-content-between align-items-center">
+          <a href="#" class="text-white-50">
+            <i class="bi bi-gear-fill"></i>
+          </a>
+          <a href="#" class="text-white-50">
+            <i class="bi bi-bell-fill"></i>
+          </a>
+          <a href="/" class="text-white-50">
+            <i class="bi bi-box-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" id="mainContent">
+    <!-- Dashboard -->
+    <section id="dashboard" class="content-section">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1">Welcome back, John!</h2>
+          <p class="text-muted mb-0">Here's your financial overview for ABC Manufacturing Inc.</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary">
+            <i class="bi bi-download me-2"></i> Export Report
+          </button>
+          <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+              <i class="bi bi-calendar me-2"></i> Q4 2025
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Q1 2025</a></li>
+              <li><a class="dropdown-item" href="#">Q2 2025</a></li>
+              <li><a class="dropdown-item" href="#">Q3 2025</a></li>
+              <li><a class="dropdown-item active" href="#">Q4 2025</a></li>
+              <li><a class="dropdown-item" href="#">Q1 2026</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Stats Cards -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-3">
+          <div class="card dashboard-card card-primary shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase opacity-75 mb-1">Tax Savings</h6>
+                  <h2 class="mb-0">$47,850</h2>
+                  <small class="opacity-75">+12.5% vs last year</small>
+                </div>
+                <i class="bi bi-cash-coin display-6 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card card-success shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase opacity-75 mb-1">ESG Credits</h6>
+                  <h2 class="mb-0">$28,500</h2>
+                  <small class="opacity-75">Green energy incentives</small>
+                </div>
+                <i class="bi bi-tree display-6 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card card-info shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase opacity-75 mb-1">Documents</h6>
+                  <h2 class="mb-0">24</h2>
+                  <small class="opacity-75">3 pending review</small>
+                </div>
+                <i class="bi bi-folder display-6 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card card-secondary shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <h6 class="text-uppercase opacity-75 mb-1">Deadlines</h6>
+                  <h2 class="mb-0">15</h2>
+                  <small class="opacity-75">5 days until next</small>
+                </div>
+                <i class="bi bi-clock display-6 opacity-50"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts & Tasks -->
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Financial Overview</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="financialChart" height="250"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Upcoming Tasks</h5>
+            </div>
+            <div class="card-body">
+              <div class="task-item high">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">Q4 Tax Return</h6>
+                    <small class="text-muted">Due: Dec 31, 2025</small>
+                  </div>
+                  <span class="status-badge status-overdue">Overdue</span>
+                </div>
+                <div class="progress mt-2">
+                  <div class="progress-bar bg-danger" style="width: 75%"></div>
+                </div>
+              </div>
+              
+              <div class="task-item medium">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">ESG Report Review</h6>
+                    <small class="text-muted">Due: Jan 15, 2026</small>
+                  </div>
+                  <span class="status-badge status-inprogress">In Progress</span>
+                </div>
+                <div class="progress mt-2">
+                  <div class="progress-bar bg-warning" style="width: 40%"></div>
+                </div>
+              </div>
+              
+              <div class="task-item low">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">Employee Training Docs</h6>
+                    <small class="text-muted">Due: Feb 1, 2026</small>
+                  </div>
+                  <span class="status-badge status-pending">Pending</span>
+                </div>
+                <div class="progress mt-2">
+                  <div class="progress-bar bg-secondary" style="width: 20%"></div>
+                </div>
+              </div>
+              
+              <div class="task-item">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <h6 class="mb-1">Annual Audit Prep</h6>
+                    <small class="text-muted">Due: Mar 15, 2026</small>
+                  </div>
+                  <span class="status-badge status-pending">Pending</span>
+                </div>
+                <div class="progress mt-2">
+                  <div class="progress-bar bg-info" style="width: 10%"></div>
+                </div>
+              </div>
+              
+              <button class="btn btn-outline-primary w-100 mt-3">
+                <i class="bi bi-plus-circle me-2"></i> Add New Task
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Recent Activity -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Recent Activity</h5>
+              <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Activity</th>
+                      <th>User</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Dec 15, 2025</td>
+                      <td>Q3 Financial Statements Uploaded</td>
+                      <td>John Smith</td>
+                      <td><span class="status-badge status-complete">Reviewed</span></td>
+                      <td><a href="#" class="btn btn-sm btn-outline-primary">Download</a></td>
+                    </tr>
+                    <tr>
+                      <td>Dec 12, 2025</td>
+                      <td>ESG Credit Application Submitted</td>
+                      <td>Sarah Johnson</td>
+                      <td><span class="status-badge status-inprogress">Processing</span></td>
+                      <td><a href="#" class="btn btn-sm btn-outline-warning">Track</a></td>
+                    </tr>
+                    <tr>
+                      <td>Dec 10, 2025</td>
+                      <td>Tax Strategy Meeting Completed</td>
+                      <td>Michael Chen</td>
+                      <td><span class="status-badge status-complete">Completed</span></td>
+                      <td><a href="#" class="btn btn-sm btn-outline-primary">Notes</a></td>
+                    </tr>
+                    <tr>
+                      <td>Dec 8, 2025</td>
+                      <td>Annual Audit Scheduled</td>
+                      <td>David Park</td>
+                      <td><span class="status-badge status-pending">Scheduled</span></td>
+                      <td><a href="#" class="btn btn-sm btn-outline-info">Reschedule</a></td>
+                    </tr>
+                    <tr>
+                      <td>Dec 5, 2025</td>
+                      <td>Carbon Footprint Report Generated</td>
+                      <td>System</td>
+                      <td><span class="status-badge status-complete">Ready</span></td>
+                      <td><a href="#" class="btn btn-sm btn-success">View Report</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Documents Section (hidden by default) -->
+    <section id="documents" class="content-section" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1">Document Center</h2>
+          <p class="text-muted mb-0">Securely store and share financial documents</p>
+        </div>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+          <i class="bi bi-cloud-upload me-2"></i> Upload Document
+        </button>
+      </div>
+      
+      <!-- File Upload Area -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <div class="file-upload-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
+            <i class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
+            <h5>Drag & drop files here</h5>
+            <p class="text-muted">or click to browse. Max file size: 50MB</p>
+            <input type="file" id="fileInput" multiple style="display: none;">
+          </div>
+          <div class="mt-3">
+            <small class="text-muted">Supported formats: PDF, DOC, XLS, JPG, PNG</small>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Document Categories -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-file-earmark-text-fill display-4 text-primary mb-3"></i>
+              <h5>Tax Documents</h5>
+              <p class="text-muted">12 files</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-graph-up-arrow display-4 text-success mb-3"></i>
+              <h5>Financial Statements</h5>
+              <p class="text-muted">8 files</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-tree-fill display-4 text-success mb-3"></i>
+              <h5>ESG Reports</h5>
+              <p class="text-muted">6 files</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-shield-check display-4 text-warning mb-3"></i>
+              <h5>Audit Files</h5>
+              <p class="text-muted">4 files</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Document Table -->
+      <div class="card shadow-sm">
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0">Recent Documents</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover document-table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Category</th>
+                  <th>Uploaded</th>
+                  <th>Size</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-pdf text-danger fs-4 me-3"></i>
+                      <div>
+                        <strong>2025_Q3_Financials.pdf</strong>
+                        <div class="text-muted small">Updated by Michael Chen</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Financial Statements</td>
+                  <td>Dec 15, 2025</td>
+                  <td>4.2 MB</td>
+                  <td><span class="status-badge status-complete">Reviewed</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-share"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-excel text-success fs-4 me-3"></i>
+                      <div>
+                        <strong>Tax_Worksheet_2025.xlsx</strong>
+                        <div class="text-muted small">Needs review</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Tax Documents</td>
+                  <td>Dec 10, 2025</td>
+                  <td>1.8 MB</td>
+                  <td><span class="status-badge status-pending">Pending</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-warning">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-text text-primary fs-4 me-3"></i>
+                      <div>
+                        <strong>ESG_Report_2025.pdf</strong>
+                        <div class="text-muted small">Final version</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>ESG Reports</td>
+                  <td>Dec 5, 2025</td>
+                  <td>3.5 MB</td>
+                  <td><span class="status-badge status-complete">Approved</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-success">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-file-image text-info fs-4 me-3"></i>
+                      <div>
+                        <strong>Receipts_Q4.zip</strong>
+                        <div class="text-muted small">Expense documentation</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>Supporting Docs</td>
+                  <td>Dec 1, 2025</td>
+                  <td>12.4 MB</td>
+                  <td><span class="status-badge status-inprogress">Processing</span></td>
+                  <td>
+                    <button class="btn btn-sm btn-outline-primary me-1">
+                      <i class="bi bi-download"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-info">
+                      <i class="bi bi-list-check"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tax Center Section (hidden by default) -->
+    <section id="tax" class="content-section" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1">Tax Center</h2>
+          <p class="text-muted mb-0">Tax planning, calculations, and compliance</p>
+        </div>
+        <button class="btn btn-primary">
+          <i class="bi bi-calendar-check me-2"></i> Tax Calendar
+        </button>
+      </div>
+      
+      <!-- Tax Calculator -->
+      <div class="row mb-4">
+        <div class="col-lg-8">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Tax Estimator</h5>
+            </div>
+            <div class="card-body">
+              <div class="tax-input-group mb-4">
+                <label class="form-label">Estimated Annual Revenue</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="revenueInput" value="850000">
+                  <span class="input-group-text">.00</span>
+                </div>
+              </div>
+              
+              <div class="tax-input-group mb-4">
+                <label class="form-label">Business Expenses</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="expensesInput" value="420000">
+                  <span class="input-group-text">.00</span>
+                </div>
+              </div>
+              
+              <div class="tax-input-group mb-4">
+                <label class="form-label">Green Energy Credits</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="creditsInput" value="28500">
+                  <span class="input-group-text">.00</span>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary w-100" onclick="calculateTax()">
+                Calculate Tax Liability
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="tax-result h-100">
+            <h4>Estimated Tax Liability</h4>
+            <h1 class="display-4 my-4" id="taxResult">$85,450</h1>
+            <p>Based on current inputs</p>
+            <small class="opacity-75">Includes estimated green credits</small>
+            <hr class="my-3 opacity-50">
+            <button class="btn btn-outline-light w-100 mt-3">
+              <i class="bi bi-download me-2"></i> Export Calculation
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tax Deadlines -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Upcoming Deadlines</h5>
+            </div>
+            <div class="card-body">
+              <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Q4 Estimated Tax Payment</h6>
+                    <small class="text-muted">Form 1040-ES</small>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold text-danger">Jan 15, 2026</div>
+                    <small class="text-muted">7 days remaining</small>
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Business Tax Return</h6>
+                    <small class="text-muted">Form 1120</small>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">Mar 15, 2026</div>
+                    <small class="text-muted">67 days remaining</small>
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">Personal Tax Return</h6>
+                    <small class="text-muted">Form 1040</small>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">Apr 15, 2026</div>
+                    <small class="text-muted">98 days remaining</small>
+                  </div>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <h6 class="mb-1">ESG Credit Application</h6>
+                    <small class="text-muted">Green Energy Form</small>
+                  </div>
+                  <div class="text-end">
+                    <div class="fw-bold">Jun 30, 2026</div>
+                    <small class="text-muted">174 days remaining</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Tax Forms Status</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Form 941 (Quarterly)</span>
+                  <span>100%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-success" style="width: 100%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Form 1099-MISC</span>
+                  <span>75%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-warning" style="width: 75%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Form W-2</span>
+                  <span>50%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-info" style="width: 50%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>State Tax Forms</span>
+                  <span>25%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-danger" style="width: 25%"></div>
+                </div>
+              </div>
+              
+              <button class="btn btn-outline-primary w-100 mt-3">
+                <i class="bi bi-file-arrow-up me-2"></i> Upload Completed Forms
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Messages Section (hidden by default) -->
+    <section id="messages" class="content-section" style="display: none;">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Contacts</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="list-group list-group-flush">
+                <a href="#" class="list-group-item list-group-item-action active">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                      <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Michael Chen, CPA</h6>
+                      <small class="opacity-75">Managing Partner</small>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                      SJ
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Sarah Johnson</h6>
+                      <small class="opacity-75">Tax Director</small>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-info text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                      DP
+                    </div>
+                    <div>
+                      <h6 class="mb-0">David Park</h6>
+                      <small class="opacity-75">ESG Advisory</small>
+                    </div>
+                  </div>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                  <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                      <i class="bi bi-headset"></i>
+                    </div>
+                    <div>
+                      <h6 class="mb-0">Support Team</h6>
+                      <small class="opacity-75">Technical Support</small>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-lg-8">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div>
+                    <h6 class="mb-0">Michael Chen, CPA</h6>
+                    <small class="text-muted">Last seen: Today 10:30 AM</small>
+                  </div>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-telephone"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-primary ms-1">
+                    <i class="bi bi-camera-video"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-body" style="height: 400px; overflow-y: auto;">
+              <!-- Message Thread -->
+              <div class="message received">
+                <div class="d-flex justify-content-between">
+                  <strong>Michael Chen</strong>
+                  <small class="text-muted">Yesterday, 2:30 PM</small>
+                </div>
+                <p class="mb-0">Hi John, I've reviewed your Q3 financials. There are some opportunities for additional tax deductions related to your recent equipment purchases.</p>
+              </div>
+              
+              <div class="message sent">
+                <div class="d-flex justify-content-between">
+                  <strong>You</strong>
+                  <small class="text-muted">Yesterday, 3:15 PM</small>
+                </div>
+                <p class="mb-0">Thanks Michael! Could you elaborate on the equipment deductions? We purchased two new CNC machines last quarter.</p>
+              </div>
+              
+              <div class="message received">
+                <div class="d-flex justify-content-between">
+                  <strong>Michael Chen</strong>
+                  <small class="text-muted">Today, 9:45 AM</small>
+                </div>
+                <p class="mb-0">Absolutely. Under Section 179, you can deduct the full purchase price of qualifying equipment. The CNC machines likely qualify. Also, check if they're energy-efficient for additional green credits.</p>
+              </div>
+              
+              <div class="message received">
+                <div class="d-flex justify-content-between">
+                  <strong>Michael Chen</strong>
+                  <small class="text-muted">Today, 10:30 AM</small>
+                </div>
+                <p class="mb-0">I've attached a preliminary calculation showing potential savings of $28,500. Can we schedule a call tomorrow to discuss?</p>
+                <div class="mt-2">
+                  <a href="#" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-paperclip me-1"></i> tax_calculation.pdf
+                  </a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-footer bg-white border-top">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Type your message...">
+                <button class="btn btn-outline-secondary" type="button">
+                  <i class="bi bi-paperclip"></i>
+                </button>
+                <button class="btn btn-primary" type="button">
+                  <i class="bi bi-send"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESG Dashboard Section (hidden by default) -->
+    <section id="esg" class="content-section" style="display: none;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 class="mb-1">ESG Dashboard</h2>
+          <p class="text-muted mb-0">Environmental, Social & Governance Metrics</p>
+        </div>
+        <button class="btn btn-success">
+          <i class="bi bi-download me-2"></i> Download ESG Report
+        </button>
+      </div>
+      
+      <!-- ESG Scorecard -->
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="card dashboard-card" style="background: linear-gradient(135deg, #198754 0%, #0d6e3d 100%); color: white;">
+            <div class="card-body">
+              <div class="text-center">
+                <h1 class="display-4 mb-2">82</h1>
+                <h6 class="text-uppercase opacity-75">Overall ESG Score</h6>
+                <small class="opacity-75">+5 points from last year</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-cloud-snow display-4 text-primary mb-3"></i>
+              <h4>245 tCO2e</h4>
+              <h6 class="text-uppercase text-muted">Carbon Footprint</h6>
+              <small class="text-success">↓ 15% reduction</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-lightning-charge display-4 text-warning mb-3"></i>
+              <h4>65%</h4>
+              <h6 class="text-uppercase text-muted">Renewable Energy</h6>
+              <small class="text-success">↑ 20% increase</small>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card dashboard-card">
+            <div class="card-body text-center">
+              <i class="bi bi-recycle display-4 text-success mb-3"></i>
+              <h4>92%</h4>
+              <h6 class="text-uppercase text-muted">Waste Recycled</h6>
+              <small>Industry leader</small>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ESG Charts -->
+      <div class="row">
+        <div class="col-lg-8">
+          <div class="card shadow-sm">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">Carbon Emissions Trend</h5>
+            </div>
+            <div class="card-body">
+              <canvas id="carbonChart" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card shadow-sm h-100">
+            <div class="card-header bg-white border-bottom">
+              <h5 class="mb-0">ESG Compliance Status</h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>GRI Standards</span>
+                  <span>100%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-success" style="width: 100%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>SASB Reporting</span>
+                  <span>85%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-warning" style="width: 85%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>TCFD Alignment</span>
+                  <span>70%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-info" style="width: 70%"></div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span>UN SDGs</span>
+                  <span>60%</span>
+                </div>
+                <div class="progress">
+                  <div class="progress-bar bg-primary" style="width: 60%"></div>
+                </div>
+              </div>
+              
+              <button class="btn btn-outline-success w-100">
+                <i class="bi bi-file-earmark-check me-2"></i> Generate Compliance Report
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal fade" id="uploadModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Upload Document</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="uploadForm">
+            <div class="mb-3">
+              <label class="form-label">Document Name</label>
+              <input type="text" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Category</label>
+              <select class="form-select" required>
+                <option value="">Select category</option>
+                <option value="tax">Tax Documents</option>
+                <option value="financial">Financial Statements</option>
+                <option value="esg">ESG Reports</option>
+                <option value="audit">Audit Files</option>
+                <option value="legal">Legal Documents</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Select File</label>
+              <input type="file" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Description (Optional)</label>
+              <textarea class="form-control" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" form="uploadForm" class="btn btn-primary">Upload Document</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize Charts
+    document.addEventListener('DOMContentLoaded', function() {
+      // Financial Chart
+      const financialCtx = document.getElementById('financialChart').getContext('2d');
+      new Chart(financialCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+            label: 'Revenue',
+            data: [65000, 72000, 81000, 78000, 85000, 92000, 88000, 95000, 98000, 102000, 110000, 115000],
+            borderColor: '#2e7d32',
+            backgroundColor: 'rgba(46, 125, 50, 0.1)',
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Expenses',
+            data: [42000, 45000, 48000, 46000, 50000, 52000, 51000, 53000, 55000, 56000, 58000, 60000],
+            borderColor: '#dc3545',
+            backgroundColor: 'rgba(220, 53, 69, 0.1)',
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: function(value) {
+                  return '$' + value.toLocaleString();
+                }
+              }
+            }
+          }
+        }
+      });
+      
+      // Carbon Chart
+      const carbonCtx = document.getElementById('carbonChart').getContext('2d');
+      new Chart(carbonCtx, {
+        type: 'bar',
+        data: {
+          labels: ['2021', '2022', '2023', '2024', '2025'],
+          datasets: [{
+            label: 'Carbon Emissions (tCO2e)',
+            data: [420, 380, 320, 290, 245],
+            backgroundColor: [
+              'rgba(46, 125, 50, 0.7)',
+              'rgba(46, 125, 50, 0.7)',
+              'rgba(46, 125, 50, 0.7)',
+              'rgba(46, 125, 50, 0.7)',
+              'rgba(46, 125, 50, 0.7)'
+            ],
+            borderColor: [
+              '#2e7d32',
+              '#2e7d32',
+              '#2e7d32',
+              '#2e7d32',
+              '#2e7d32'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'tCO2e'
+              }
+            }
+          }
+        }
+      });
+    });
+    
+    // Sidebar Toggle for Mobile
+    document.getElementById('sidebarToggle').addEventListener('click', function() {
+      document.getElementById('sidebar').classList.toggle('active');
+      document.getElementById('mainContent').classList.toggle('active');
+    });
+    
+    // Navigation between sections
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active class from all links
+        document.querySelectorAll('.sidebar .nav-link').forEach(l => l.classList.remove('active'));
+        
+        // Add active class to clicked link
+        this.classList.add('active');
+        
+        // Hide all sections
+        document.querySelectorAll('.content-section').forEach(section => {
+          section.style.display = 'none';
+        });
+        
+        // Show selected section
+        const targetId = this.getAttribute('href').substring(1);
+        document.getElementById(targetId).style.display = 'block';
+        
+        // Close sidebar on mobile after selection
+        if (window.innerWidth <= 768) {
+          document.getElementById('sidebar').classList.remove('active');
+          document.getElementById('mainContent').classList.remove('active');
+        }
+      });
+    });
+    
+    // Tax Calculator Function
+    function calculateTax() {
+      const revenue = parseFloat(document.getElementById('revenueInput').value) || 0;
+      const expenses = parseFloat(document.getElementById('expensesInput').value) || 0;
+      const credits = parseFloat(document.getElementById('creditsInput').value) || 0;
+      
+      const profit = revenue - expenses;
+      let tax = profit * 0.21; // 21% corporate tax rate
+      tax = Math.max(0, tax - credits); // Apply credits
+      
+      document.getElementById('taxResult').textContent = '$' + tax.toLocaleString(undefined, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      });
+    }
+    
+    // File Upload Drag & Drop
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    dropArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#2e7d32';
+      dropArea.style.background = 'rgba(46, 125, 50, 0.1)';
+    });
+    
+    dropArea.addEventListener('dragleave', () => {
+      dropArea.style.borderColor = '#dee2e6';
+      dropArea.style.background = '#f8f9fa';
+    });
+    
+    dropArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropArea.style.borderColor = '#dee2e6';
+      dropArea.style.background = '#f8f9fa';
+      
+      const files = e.dataTransfer.files;
+      handleFiles(files);
+    });
+    
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+    
+    function handleFiles(files) {
+      if (files.length > 0) {
+        alert(`Selected ${files.length} file(s). Ready to upload!`);
+        // In a real application, you would upload files to server here
+      }
+    }
+    
+    // Initialize tax calculation
+    calculateTax();
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
