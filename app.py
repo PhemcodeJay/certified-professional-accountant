@@ -166,23 +166,162 @@ def init_db():
         )
     ''')
     
-    # Create admin user if not exists
+    # Create admin user if not exists - FIXED: Ensure admin is active
     admin_password = bcrypt.generate_password_hash('Admin@123').decode('utf-8')
     try:
+        # First insert or ignore the admin user with is_active = 1
         c.execute('''
             INSERT OR IGNORE INTO users 
-            (username, email, password, full_name, company, role) 
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', ('admin', 'admin@greencpapartners.com', admin_password, 'System Administrator', 'Pacific Green Partners', 'admin'))
-    except:
-        pass
+            (username, email, password, full_name, company, role, is_active) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        ''', ('admin', 'admin@greencpapartners.com', admin_password, 'System Administrator', 'Pacific Green Partners', 'admin', 1))
+        
+        # Then update to ensure is_active is 1 (in case user already existed)
+        c.execute('UPDATE users SET is_active = 1 WHERE username = "admin"')
+    except Exception as e:
+        print(f"Error creating/updating admin: {e}")
+    
+    # Create sample user for testing all features
+    sample_password = bcrypt.generate_password_hash('Test@123').decode('utf-8')
+    try:
+        # Insert sample user
+        c.execute('''
+            INSERT OR IGNORE INTO users 
+            (username, email, password, full_name, company, phone, ein, business_type, tax_year_end, role, is_active) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', ('sampleuser', 'sample@greencpapartners.com', sample_password, 'John Doe', 'Sample Corporation', '555-123-4567', '12-3456789', 'LLC', '2023-12-31', 'client', 1))
+        
+        # Get sample user ID
+        c.execute('SELECT id FROM users WHERE username = "sampleuser"')
+        sample_user_result = c.fetchone()
+        
+        if sample_user_result:
+            sample_user_id = sample_user_result[0]
+            
+            # Create user profile for sample user
+            sample_tax_data = json.dumps({
+                'income': 85000,
+                'deductions': 15000,
+                'credits': 2500,
+                'filing_status': 'single'
+            })
+            sample_esg_data = json.dumps({
+                'environmental_score': 88,
+                'social_score': 92,
+                'governance_score': 90,
+                'carbon_footprint': '180 tCO2e',
+                'energy_consumption': '120,000 kWh',
+                'waste_reduction': '52%',
+                'employee_satisfaction': '4.7/5',
+                'community_investment': '$45,000'
+            })
+            c.execute('''
+                INSERT OR IGNORE INTO user_profiles 
+                (user_id, tax_data, esg_data, tax_status, audit_status) 
+                VALUES (?, ?, ?, ?, ?)
+            ''', (sample_user_id, sample_tax_data, sample_esg_data, 'completed', 'not_scheduled'))
+            
+            # Create sample tax filing
+            c.execute('''
+                INSERT OR IGNORE INTO tax_filings 
+                (user_id, tax_year, filing_type, form_type, status, submitted_date, due_date, amount_due, amount_paid)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 2023, 'electronic', '1120', 'submitted', '2024-04-15 10:30:00', '2024-03-15', 15250.75, 15250.75))
+            
+            # Create pending tax filing
+            c.execute('''
+                INSERT OR IGNORE INTO tax_filings 
+                (user_id, tax_year, filing_type, form_type, status, due_date, amount_due)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 2024, 'electronic', '1120', 'pending', '2025-03-15', 18250.00))
+            
+            # Create sample audit
+            c.execute('''
+                INSERT OR IGNORE INTO audits 
+                (user_id, audit_type, audit_year, status, scheduled_date, auditor_assigned)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'financial', 2023, 'completed', '2024-02-15 09:00:00', 'Jane Smith, CPA'))
+            
+            # Create upcoming audit
+            c.execute('''
+                INSERT OR IGNORE INTO audits 
+                (user_id, audit_type, audit_year, status, scheduled_date, auditor_assigned)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'compliance', 2024, 'scheduled', '2024-11-10 14:00:00', 'To be assigned'))
+            
+            # Create sample services
+            c.execute('''
+                INSERT OR IGNORE INTO services 
+                (user_id, service_type, service_name, status, monthly_fee)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'tax', 'Monthly Bookkeeping & Accounting', 'active', 750.00))
+            
+            c.execute('''
+                INSERT OR IGNORE INTO services 
+                (user_id, service_type, service_name, status, monthly_fee)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'audit', 'Annual Financial Audit & Review', 'active', 3500.00))
+            
+            c.execute('''
+                INSERT OR IGNORE INTO services 
+                (user_id, service_type, service_name, status, monthly_fee)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'consulting', 'ESG Reporting & Compliance', 'active', 1200.00))
+            
+            # Create sample documents
+            c.execute('''
+                INSERT OR IGNORE INTO documents 
+                (user_id, filename, category, file_size, status, upload_date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, '2023_tax_return_final.pdf', 'tax', 2048000, 'reviewed', '2024-04-16 11:20:00'))
+            
+            c.execute('''
+                INSERT OR IGNORE INTO documents 
+                (user_id, filename, category, file_size, status, upload_date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'financial_statements_Q1_2024.xlsx', 'financial', 1536000, 'reviewed', '2024-04-10 14:30:00'))
+            
+            c.execute('''
+                INSERT OR IGNORE INTO documents 
+                (user_id, filename, category, file_size, status, upload_date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'business_license_2024.jpg', 'legal', 512000, 'pending', '2024-04-20 09:15:00'))
+            
+            c.execute('''
+                INSERT OR IGNORE INTO documents 
+                (user_id, filename, category, file_size, status, upload_date)
+                VALUES (?, ?, ?, ?, ?, ?)
+            ''', (sample_user_id, 'esg_report_2023.pdf', 'esg', 3072000, 'reviewed', '2024-03-28 16:45:00'))
+            
+            # Get admin ID
+            c.execute('SELECT id FROM users WHERE username = "admin"')
+            admin_result = c.fetchone()
+            
+            if admin_result:
+                admin_id = admin_result[0]
+                
+                # Create sample message from admin to sample user
+                c.execute('''
+                    INSERT OR IGNORE INTO messages 
+                    (sender_id, receiver_id, subject, message, read)
+                    VALUES (?, ?, ?, ?, ?)
+                ''', (admin_id, sample_user_id, 'Welcome to Pacific Green Partners Portal!', 'Dear John,\n\nWelcome to our client portal! Your account has been set up with sample data so you can explore all the features.\n\nYou can view your tax filings, audit schedules, upload documents, and try out our automated tax filing feature.\n\nIf you have any questions, please don\'t hesitate to contact us.\n\nBest regards,\n\nPacific Green Partners Team', 0))
+                
+                # Create another message
+                c.execute('''
+                    INSERT OR IGNORE INTO messages 
+                    (sender_id, receiver_id, subject, message, read, sent_date)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (admin_id, sample_user_id, 'Upcoming Tax Deadline Reminder', 'Dear John,\n\nThis is a reminder that your quarterly estimated tax payment is due on June 15, 2024. Please upload your payment confirmation once completed.\n\nThank you,\n\nPacific Green Partners Team', 0, '2024-04-18 10:00:00'))
+    except Exception as e:
+        print(f"Error creating sample user data: {e}")
     
     conn.commit()
     conn.close()
 
-# User class for Flask-Login
+# User class for Flask-Login - UPDATED to include is_active
 class User(UserMixin):
-    def __init__(self, id, username, email, full_name, company, phone, ein, business_type, tax_year_end, role):
+    def __init__(self, id, username, email, full_name, company, phone, ein, business_type, tax_year_end, role, is_active):
         self.id = id
         self.username = username
         self.email = email
@@ -193,6 +332,7 @@ class User(UserMixin):
         self.business_type = business_type
         self.tax_year_end = tax_year_end
         self.role = role
+        self.is_active = is_active
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -213,7 +353,8 @@ def load_user(user_id):
             ein=user_data[7],
             business_type=user_data[8],
             tax_year_end=user_data[9],
-            role=user_data[10]
+            role=user_data[10],
+            is_active=user_data[12]
         )
     return None
 
@@ -290,6 +431,8 @@ def get_user_dashboard_data(user_id):
 @app.route('/')
 def home():
     if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
         return redirect(url_for('portal'))
     return redirect(url_for('index'))
 
@@ -383,6 +526,8 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
         return redirect(url_for('portal'))
     
     if request.method == 'POST':
@@ -416,7 +561,8 @@ def login():
                 ein=user[7],
                 business_type=user[8],
                 tax_year_end=user[9],
-                role=user[10]
+                role=user[10],
+                is_active=user[12]
             )
             login_user(user_obj)
             update_last_login(user[0])
@@ -434,6 +580,8 @@ def login():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
+        if current_user.role == 'admin':
+            return redirect(url_for('admin_dashboard'))
         return redirect(url_for('portal'))
     
     if request.method == 'POST':
@@ -491,18 +639,20 @@ def register():
             
             # Insert user with proper handling of optional fields
             c.execute('''INSERT INTO users 
-                       (username, email, password, full_name, company, phone, ein, business_type, tax_year_end) 
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                       (username, email, password, full_name, company, phone, ein, business_type, tax_year_end, is_active) 
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
                      (username, email, hashed_password, full_name, company or '', phone or '', 
-                      ein or '', business_type or '', tax_year_end or ''))
+                      ein or '', business_type or '', tax_year_end or '', 1))
             
             # Get the user ID
             user_id = c.lastrowid
             
             # Create user profile with default JSON
             default_preferences = json.dumps({"theme": "light", "notifications": True})
-            c.execute('INSERT INTO user_profiles (user_id, preferences) VALUES (?, ?)', 
-                     (user_id, default_preferences))
+            default_tax_data = json.dumps({"income": 0, "deductions": 0, "credits": 0})
+            default_esg_data = json.dumps({"environmental_score": 75, "social_score": 80, "governance_score": 85})
+            c.execute('INSERT INTO user_profiles (user_id, preferences, tax_data, esg_data) VALUES (?, ?, ?, ?)', 
+                     (user_id, default_preferences, default_tax_data, default_esg_data))
             
             conn.commit()
             conn.close()
@@ -595,6 +745,10 @@ def portal():
                 ORDER BY m.sent_date DESC LIMIT 5''', (current_user.id,))
     messages = c.fetchall()
     
+    # Get active services
+    c.execute('SELECT * FROM services WHERE user_id = ? AND status = "active" ORDER BY start_date DESC', (current_user.id,))
+    services = c.fetchall()
+    
     conn.close()
     
     # Format data for template
@@ -616,8 +770,8 @@ def portal():
             'tax_year': tax[2],
             'form_type': tax[3],
             'status': tax[4],
-            'due_date': tax[6],
-            'amount_due': tax[7]
+            'due_date': tax[7],
+            'amount_due': tax[8]
         })
     
     audit_list = []
@@ -641,6 +795,16 @@ def portal():
             'sender_name': msg[9]
         })
     
+    service_list = []
+    for service in services:
+        service_list.append({
+            'id': service[0],
+            'service_type': service[2],
+            'service_name': service[3],
+            'status': service[4],
+            'monthly_fee': service[8]
+        })
+    
     return render_template('portal.html', 
                          user=current_user,
                          dashboard_data=dashboard_data,
@@ -648,6 +812,7 @@ def portal():
                          tax_filings=tax_list,
                          audits=audit_list,
                          messages=message_list,
+                         services=service_list,
                          profile=profile)
 
 # Automated Tax Filing Routes
@@ -667,7 +832,8 @@ def auto_file_tax():
     
     # Calculate tax (simplified)
     c.execute('SELECT tax_data FROM user_profiles WHERE user_id = ?', (current_user.id,))
-    tax_data = json.loads(c.fetchone()[0])
+    tax_data_result = c.fetchone()
+    tax_data = json.loads(tax_data_result[0]) if tax_data_result else {}
     
     # Simplified tax calculation
     income = tax_data.get('income', 0)
