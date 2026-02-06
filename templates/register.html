@@ -107,7 +107,7 @@
           <div class="register-header">
             <i class="bi bi-tree-fill display-4 mb-3"></i>
             <h2>Create Account</h2>
-            <p class="opacity-75 mb-0">Join our secure client portal</p>
+            <p class="opacity-75 mb-0">Join our secure CPA client portal for tax and audit services</p>
           </div>
           
           <div class="register-body">
@@ -123,6 +123,7 @@
             {% endwith %}
             
             <form method="POST" action="{{ url_for('register') }}">
+              {{ form.hidden_tag() }}  <!-- CSRF -->
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="full_name" class="form-label">Full Name *</label>
@@ -130,17 +131,17 @@
                     <span class="input-group-text bg-light">
                       <i class="bi bi-person-badge"></i>
                     </span>
-                    <input type="text" class="form-control" id="full_name" name="full_name" value="{{ full_name or '' }}" required>
+                    {{ form.full_name(class="form-control") }}
                   </div>
                 </div>
                 
                 <div class="col-md-6 mb-3">
-                  <label for="company" class="form-label">Company Name</label>
+                  <label for="company" class="form-label">Company Name (for Business)</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light">
                       <i class="bi bi-building"></i>
                     </span>
-                    <input type="text" class="form-control" id="company" name="company" value="{{ company or '' }}">
+                    {{ form.company(class="form-control") }}
                   </div>
                 </div>
               </div>
@@ -152,7 +153,7 @@
                     <span class="input-group-text bg-light">
                       <i class="bi bi-person-circle"></i>
                     </span>
-                    <input type="text" class="form-control" id="username" name="username" value="{{ username or '' }}" required>
+                    {{ form.username(class="form-control") }}
                   </div>
                   <small class="text-muted">At least 3 characters</small>
                 </div>
@@ -163,7 +164,7 @@
                     <span class="input-group-text bg-light">
                       <i class="bi bi-envelope"></i>
                     </span>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ email or '' }}" required>
+                    {{ form.email(class="form-control") }}
                   </div>
                 </div>
               </div>
@@ -175,69 +176,50 @@
                     <span class="input-group-text bg-light">
                       <i class="bi bi-key"></i>
                     </span>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    {{ form.password(class="form-control") }}
                   </div>
                   <div class="password-strength" id="passwordStrength"></div>
                   <small class="text-muted">At least 6 characters</small>
                 </div>
                 
                 <div class="col-md-6 mb-3">
-                  <label for="confirm_password" class="form-label">Confirm Password *</label>
+                  <label for="phone" class="form-label">Phone</label>
                   <div class="input-group">
                     <span class="input-group-text bg-light">
-                      <i class="bi bi-key-fill"></i>
+                      <i class="bi bi-telephone"></i>
                     </span>
-                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    {{ form.phone(class="form-control") }}
                   </div>
                 </div>
               </div>
               
-              <div class="mb-4">
-                <label for="phone" class="form-label">Phone Number</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-telephone"></i>
-                  </span>
-                  <input type="tel" class="form-control" id="phone" name="phone" value="{{ phone or '' }}">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="ein" class="form-label">EIN / Tax ID (Optional for Business)</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">
+                      <i class="bi bi-123"></i>
+                    </span>
+                    {{ form.ein(class="form-control") }}
+                  </div>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label for="business_type" class="form-label">Business Type (Optional)</label>
+                  {{ form.business_type(class="form-select") }}
                 </div>
               </div>
-              
-              <!-- Add these fields to register.html after the phone field -->
-<div class="row">
-    <div class="col-md-6 mb-3">
-        <label for="ein" class="form-label">EIN / Tax ID (Optional)</label>
-        <div class="input-group">
-            <span class="input-group-text bg-light">
-                <i class="bi bi-123"></i>
-            </span>
-            <input type="text" class="form-control" id="ein" name="ein" value="{{ ein or '' }}">
-        </div>
-    </div>
-      
-      <div class="col-md-6 mb-3">
-          <label for="business_type" class="form-label">Business Type (Optional)</label>
-          <select class="form-select" id="business_type" name="business_type">
-              <option value="">Select business type</option>
-              <option value="sole_proprietor" {% if business_type == 'sole_proprietor' %}selected{% endif %}>Sole Proprietor</option>
-              <option value="llc" {% if business_type == 'llc' %}selected{% endif %}>LLC</option>
-              <option value="corporation" {% if business_type == 'corporation' %}selected{% endif %}>Corporation</option>
-              <option value="partnership" {% if business_type == 'partnership' %}selected{% endif %}>Partnership</option>
-              <option value="nonprofit" {% if business_type == 'nonprofit' %}selected{% endif %}>Nonprofit</option>
-              <option value="other" {% if business_type == 'other' %}selected{% endif %}>Other</option>
-          </select>
-      </div>
-  </div>
 
-  <div class="mb-4">
-      <label for="tax_year_end" class="form-label">Tax Year End (Optional)</label>
-      <div class="input-group">
-          <span class="input-group-text bg-light">
-              <i class="bi bi-calendar"></i>
-          </span>
-          <input type="date" class="form-control" id="tax_year_end" name="tax_year_end" value="{{ tax_year_end or '' }}">
-      </div>
-      <small class="text-muted">If applicable for your business</small>
-  </div>
+              <div class="mb-4">
+                <label for="tax_year_end" class="form-label">Tax Year End (Optional)</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light">
+                    <i class="bi bi-calendar"></i>
+                  </span>
+                  {{ form.tax_year_end(class="form-control") }}
+                </div>
+                <small class="text-muted">If applicable for your business</small>
+              </div>
 
               <div class="mb-4 form-check">
                 <input type="checkbox" class="form-check-input" id="terms" required>
@@ -246,9 +228,7 @@
                 </label>
               </div>
               
-              <button type="submit" class="btn btn-primary w-100 mb-3">
-                <i class="bi bi-person-plus me-2"></i>Create Account
-              </button>
+              {{ form.submit(class="btn btn-primary w-100 mb-3") }}
               
               <div class="text-center">
                 <p>
@@ -257,6 +237,9 @@
                 </p>
               </div>
             </form>
+            <div class="alert alert-info mt-3">
+                Disclaimer: Register for USA CPA services. Tax/audit tools are estimates; not official.
+            </div>
           </div>
         </div>
       </div>
@@ -287,17 +270,6 @@
       } else {
         strengthBar.style.width = strength + '%';
         strengthBar.style.backgroundColor = '#198754';
-      }
-    });
-    
-    // Password confirmation
-    const confirmInput = document.getElementById('confirm_password');
-    
-    confirmInput.addEventListener('input', function() {
-      if (passwordInput.value !== this.value) {
-        this.style.borderColor = '#dc3545';
-      } else {
-        this.style.borderColor = '#198754';
       }
     });
   </script>

@@ -100,7 +100,7 @@
           <div class="login-header">
             <i class="bi bi-tree-fill display-4 mb-3"></i>
             <h2>Client Portal Login</h2>
-            <p class="opacity-75 mb-0">Access your financial and ESG dashboard</p>
+            <p class="opacity-75 mb-0">Access your financial, tax, audit, and ESG dashboard</p>
           </div>
           
           <div class="login-body">
@@ -116,13 +116,14 @@
             {% endwith %}
             
             <form method="POST" action="{{ url_for('login') }}">
+              {{ form.hidden_tag() }}  <!-- CSRF protection -->
               <div class="mb-4">
                 <label for="username" class="form-label">Username or Email</label>
                 <div class="input-group">
                   <span class="input-group-text bg-light">
                     <i class="bi bi-person"></i>
                   </span>
-                  <input type="text" class="form-control" id="username" name="username" required>
+                  {{ form.username(class="form-control") }}
                 </div>
               </div>
               
@@ -132,7 +133,7 @@
                   <span class="input-group-text bg-light">
                     <i class="bi bi-lock"></i>
                   </span>
-                  <input type="password" class="form-control" id="password" name="password" required>
+                  {{ form.password(class="form-control") }}
                 </div>
               </div>
               
@@ -141,9 +142,7 @@
                 <label class="form-check-label" for="remember">Remember me</label>
               </div>
               
-              <button type="submit" class="btn btn-primary w-100 mb-4">
-                <i class="bi bi-box-arrow-in-right me-2"></i>Login
-              </button>
+              {{ form.submit(class="btn btn-primary w-100 mb-4") }}
               
               <div class="text-center">
                 <p class="mb-2">
@@ -161,7 +160,7 @@
             <div class="text-center">
               <small class="text-muted">
                 <i class="bi bi-shield-check me-1"></i>
-                Secure SSL encrypted connection
+                Secure SSL encrypted connection. For USA tax/audit services only.
               </small>
             </div>
           </div>

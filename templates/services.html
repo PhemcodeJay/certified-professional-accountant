@@ -8,12 +8,12 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Manage Services</h1>
+        <h1>Manage CPA Services</h1>
         
         <!-- Add New Service Form -->
         <div class="card mt-4">
             <div class="card-header">
-                <h5>Add New Service</h5>
+                <h5>Add New Service (Tax, Audit, etc.)</h5>
             </div>
             <div class="card-body">
                 <form method="POST">
@@ -21,7 +21,7 @@
                         <label class="form-label">Service Type</label>
                         <select name="service_type" class="form-select" required>
                             <option value="">Select Service Type</option>
-                            <option value="tax">Tax Preparation</option>
+                            <option value="tax">Tax Preparation/Filing</option>
                             <option value="audit">Audit Services</option>
                             <option value="bookkeeping">Bookkeeping</option>
                             <option value="payroll">Payroll Services</option>
@@ -39,6 +39,9 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Add Service</button>
                 </form>
+                <div class="alert alert-info mt-3">
+                    Note: Payments processed via Stripe (integrate in prod). Services for USA personal/business.
+                </div>
             </div>
         </div>
 
