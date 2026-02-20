@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Register | Pacific Green Partners</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+  <title>Register | {{ firm_name | default('Pacific Green Partners, LLP') }}</title>
   
   <!-- Bootstrap 5.3 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   
@@ -14,35 +14,64 @@
     :root {
       --primary: #2e7d32;
       --primary-dark: #1b5e20;
-      --secondary: #0d6efd;
+      --primary-light: #4caf50;
       --light-bg: #f8f9fa;
     }
     
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .register-wrapper {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
     }
     
     .register-card {
       border: none;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       overflow: hidden;
-      transition: transform 0.3s;
+      background: white;
+      animation: slideUp 0.5s ease;
     }
     
-    .register-card:hover {
-      transform: translateY(-5px);
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .register-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
-      padding: 2.5rem 2rem;
+      padding: 2rem;
       text-align: center;
+      position: relative;
+    }
+    
+    .register-header i {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
     
     .register-body {
@@ -51,227 +80,568 @@
     }
     
     .btn-primary {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      padding: 0.75rem 2rem;
-      border-radius: 50px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      padding: 0.875rem;
+      border-radius: 12px;
       font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s;
     }
     
     .btn-primary:hover {
-      background-color: var(--primary-dark);
-      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
     }
     
-    .form-control {
+    .form-control, .form-select {
       padding: 0.75rem 1rem;
       border-radius: 10px;
       border: 2px solid #e9ecef;
       transition: all 0.3s;
     }
     
-    .form-control:focus {
+    .form-control:focus, .form-select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+    }
+    
+    .input-group-text {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-right: none;
+      border-radius: 10px 0 0 10px;
+      color: var(--primary);
+    }
+    
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 10px 10px 0;
     }
     
     .back-home {
       position: absolute;
       top: 20px;
       left: 20px;
-      color: var(--primary);
+      color: white;
       text-decoration: none;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      font-weight: 500;
+      transition: all 0.3s;
+      z-index: 10;
     }
     
     .back-home:hover {
-      color: var(--primary-dark);
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      transform: translateX(-5px);
     }
     
     .password-strength {
-      height: 5px;
+      height: 6px;
       border-radius: 3px;
-      margin-top: 5px;
+      margin-top: 8px;
       transition: all 0.3s;
+      background: #e9ecef;
+      overflow: hidden;
+    }
+    
+    .password-strength-bar {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s, background-color 0.3s;
+    }
+    
+    .password-requirements {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 5px;
+    }
+    
+    .requirement-met {
+      color: #198754;
+    }
+    
+    .requirement-met i {
+      color: #198754;
+    }
+    
+    .form-check-input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #6c757d;
+      margin: 1.5rem 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .divider::before {
+      margin-right: 1rem;
+    }
+    
+    .divider::after {
+      margin-left: 1rem;
+    }
+    
+    .login-link {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .login-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .disclaimer {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      border-left: 4px solid var(--primary);
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      .register-body {
+        padding: 1.5rem;
+      }
+      
+      .back-home {
+        top: 10px;
+        left: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* Loading state */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Tooltip */
+    .tooltip-icon {
+      color: var(--primary);
+      cursor: help;
+      margin-left: 5px;
     }
   </style>
 </head>
 <body>
   <a href="{{ url_for('index') }}" class="back-home">
-    <i class="bi bi-arrow-left me-1"></i>Back to Home
+    <i class="bi bi-arrow-left"></i>Back to Home
   </a>
   
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-7">
-        <div class="register-card">
-          <div class="register-header">
-            <i class="bi bi-tree-fill display-4 mb-3"></i>
-            <h2>Create Account</h2>
-            <p class="opacity-75 mb-0">Join our secure CPA client portal for tax and audit services</p>
-          </div>
+  <div class="register-wrapper">
+    <div class="register-card">
+      <div class="register-header">
+        <i class="bi bi-tree-fill"></i>
+        <h2 class="h3 mb-1">Create Your Account</h2>
+        <p class="opacity-75 mb-0 small">Join our secure CPA client portal</p>
+      </div>
+      
+      <div class="register-body">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+          {{ form.hidden_tag() if form }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
           
-          <div class="register-body">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="full_name" class="form-label fw-semibold">
+                Full Legal Name <span class="text-danger">*</span>
+                <i class="bi bi-question-circle tooltip-icon" data-bs-toggle="tooltip" title="Enter your full legal name as it appears on tax documents"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-person-badge"></i>
+                </span>
+                {{ form.full_name(class="form-control", placeholder="John Smith", id="full_name", required=True) if form else '' }}
+                {% if not form %}
+                <input type="text" class="form-control" id="full_name" name="full_name" placeholder="John Smith" required>
+                {% endif %}
+              </div>
+            </div>
             
-            <form method="POST" action="{{ url_for('register') }}">
-              {{ form.hidden_tag() }}  <!-- CSRF -->
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="full_name" class="form-label">Full Name *</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-person-badge"></i>
-                    </span>
-                    {{ form.full_name(class="form-control") }}
-                  </div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                  <label for="company" class="form-label">Company Name (for Business)</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-building"></i>
-                    </span>
-                    {{ form.company(class="form-control") }}
-                  </div>
-                </div>
+            <div class="col-md-6 mb-3">
+              <label for="company" class="form-label fw-semibold">Company Name (if business)</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-building"></i>
+                </span>
+                {{ form.company(class="form-control", placeholder="ABC Manufacturing Inc.", id="company") if form else '' }}
+                {% if not form %}
+                <input type="text" class="form-control" id="company" name="company" placeholder="ABC Manufacturing Inc.">
+                {% endif %}
               </div>
-              
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="username" class="form-label">Username *</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-person-circle"></i>
-                    </span>
-                    {{ form.username(class="form-control") }}
-                  </div>
-                  <small class="text-muted">At least 3 characters</small>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                  <label for="email" class="form-label">Email Address *</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-envelope"></i>
-                    </span>
-                    {{ form.email(class="form-control") }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="password" class="form-label">Password *</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-key"></i>
-                    </span>
-                    {{ form.password(class="form-control") }}
-                  </div>
-                  <div class="password-strength" id="passwordStrength"></div>
-                  <small class="text-muted">At least 6 characters</small>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                  <label for="phone" class="form-label">Phone</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-telephone"></i>
-                    </span>
-                    {{ form.phone(class="form-control") }}
-                  </div>
-                </div>
-              </div>
-              
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="ein" class="form-label">EIN / Tax ID (Optional for Business)</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">
-                      <i class="bi bi-123"></i>
-                    </span>
-                    {{ form.ein(class="form-control") }}
-                  </div>
-                </div>
-                
-                <div class="col-md-6 mb-3">
-                  <label for="business_type" class="form-label">Business Type (Optional)</label>
-                  {{ form.business_type(class="form-select") }}
-                </div>
-              </div>
-
-              <div class="mb-4">
-                <label for="tax_year_end" class="form-label">Tax Year End (Optional)</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-calendar"></i>
-                  </span>
-                  {{ form.tax_year_end(class="form-control") }}
-                </div>
-                <small class="text-muted">If applicable for your business</small>
-              </div>
-
-              <div class="mb-4 form-check">
-                <input type="checkbox" class="form-check-input" id="terms" required>
-                <label class="form-check-label" for="terms">
-                  I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a>
-                </label>
-              </div>
-              
-              {{ form.submit(class="btn btn-primary w-100 mb-3") }}
-              
-              <div class="text-center">
-                <p>
-                  Already have an account? 
-                  <a href="{{ url_for('login') }}" class="text-decoration-none fw-bold text-primary">Login here</a>
-                </p>
-              </div>
-            </form>
-            <div class="alert alert-info mt-3">
-                Disclaimer: Register for USA CPA services. Tax/audit tools are estimates; not official.
             </div>
           </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="username" class="form-label fw-semibold">
+                Username <span class="text-danger">*</span>
+                <i class="bi bi-question-circle tooltip-icon" data-bs-toggle="tooltip" title="Choose a unique username (minimum 3 characters)"></i>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-person-circle"></i>
+                </span>
+                {{ form.username(class="form-control", placeholder="jsmith", id="username", required=True) if form else '' }}
+                {% if not form %}
+                <input type="text" class="form-control" id="username" name="username" placeholder="jsmith" required minlength="3">
+                {% endif %}
+              </div>
+              <div class="small text-muted mt-1" id="usernameAvailability"></div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="email" class="form-label fw-semibold">
+                Email Address <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                {{ form.email(class="form-control", placeholder="john@example.com", id="email", type="email", required=True) if form else '' }}
+                {% if not form %}
+                <input type="email" class="form-control" id="email" name="email" placeholder="john@example.com" required>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="password" class="form-label fw-semibold">
+                Password <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-key"></i>
+                </span>
+                {{ form.password(class="form-control", placeholder="Create a strong password", id="password", required=True) if form else '' }}
+                {% if not form %}
+                <input type="password" class="form-control" id="password" name="password" placeholder="Create a strong password" required minlength="8">
+                {% endif %}
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 2px solid #e9ecef; border-left: none;">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              
+              <!-- Password strength indicator -->
+              <div class="password-strength">
+                <div class="password-strength-bar" id="passwordStrength"></div>
+              </div>
+              
+              <div class="password-requirements" id="passwordRequirements">
+                <div class="row small">
+                  <div class="col-6">
+                    <span id="reqLength"><i class="bi bi-x-circle text-danger me-1"></i> 8+ characters</span>
+                  </div>
+                  <div class="col-6">
+                    <span id="reqUpper"><i class="bi bi-x-circle text-danger me-1"></i> Uppercase</span>
+                  </div>
+                  <div class="col-6">
+                    <span id="reqLower"><i class="bi bi-x-circle text-danger me-1"></i> Lowercase</span>
+                  </div>
+                  <div class="col-6">
+                    <span id="reqNumber"><i class="bi bi-x-circle text-danger me-1"></i> Number</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="phone" class="form-label fw-semibold">Phone Number</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-telephone"></i>
+                </span>
+                {{ form.phone(class="form-control", placeholder="(555) 123-4567", id="phone") if form else '' }}
+                {% if not form %}
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="(555) 123-4567">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="ein" class="form-label fw-semibold">EIN / Tax ID</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <i class="bi bi-123"></i>
+                </span>
+                {{ form.ein(class="form-control", placeholder="12-3456789", id="ein") if form else '' }}
+                {% if not form %}
+                <input type="text" class="form-control" id="ein" name="ein" placeholder="12-3456789">
+                {% endif %}
+              </div>
+              <small class="text-muted">Format: XX-XXXXXXX (optional for individuals)</small>
+            </div>
+            
+            <div class="col-md-6 mb-3">
+              <label for="business_type" class="form-label fw-semibold">Business Type</label>
+              {{ form.business_type(class="form-select", id="business_type") if form else '' }}
+              {% if not form %}
+              <select class="form-select" id="business_type" name="business_type">
+                <option value="">Select business type...</option>
+                <option value="sole_proprietor">Sole Proprietor</option>
+                <option value="llc">LLC</option>
+                <option value="s_corporation">S Corporation</option>
+                <option value="c_corporation">C Corporation</option>
+                <option value="partnership">Partnership</option>
+                <option value="nonprofit">Nonprofit</option>
+                <option value="individual">Individual</option>
+                <option value="other">Other</option>
+              </select>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="tax_year_end" class="form-label fw-semibold">Tax Year End Date</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-calendar"></i>
+              </span>
+              {{ form.tax_year_end(class="form-control", id="tax_year_end", type="date") if form else '' }}
+              {% if not form %}
+              <input type="date" class="form-control" id="tax_year_end" name="tax_year_end">
+              {% endif %}
+            </div>
+            <small class="text-muted">For businesses: your fiscal year end (e.g., 2025-12-31)</small>
+          </div>
+
+          <div class="mb-4">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+              <label class="form-check-label small" for="terms">
+                I agree to the <a href="{{ url_for('terms') if url_for else '#' }}" target="_blank" class="text-primary">Terms of Service</a> and 
+                <a href="{{ url_for('privacy') if url_for else '#' }}" target="_blank" class="text-primary">Privacy Policy</a>. 
+                I confirm that all information provided is accurate.
+              </label>
+            </div>
+          </div>
+          
+          {{ form.submit(class="btn btn-primary w-100 mb-3", value="Create Account") if form else '' }}
+          {% if not form %}
+          <button type="submit" class="btn btn-primary w-100 mb-3" id="submitBtn">Create Account</button>
+          {% endif %}
+          
+          <div class="divider">
+            <span class="small">Already have an account?</span>
+          </div>
+          
+          <div class="text-center">
+            <a href="{{ url_for('login') }}" class="login-link">
+              Sign in here <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </form>
+        
+        <div class="disclaimer mt-4">
+          <i class="bi bi-info-circle-fill text-primary me-2"></i>
+          <strong>Important Disclaimers:</strong>
+          <ul class="small mb-0 mt-2 ps-3">
+            <li>This portal is for informational purposes only</li>
+            <li>All tax calculations are estimates and not official IRS filings</li>
+            <li>Consult with your assigned CPA for official tax advice</li>
+            <li>Audit services are subject to engagement letter agreement</li>
+          </ul>
+        </div>
+        
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            <i class="bi bi-shield-lock-fill me-1"></i>
+            Your information is encrypted and secure
+          </small>
         </div>
       </div>
     </div>
+    
+    <!-- Footer Links -->
+    <div class="text-center mt-4">
+      <small class="text-white-50">
+        <a href="{{ url_for('index') }}#privacy" class="text-white-50 text-decoration-none me-3">Privacy</a>
+        <a href="{{ url_for('index') }}#terms" class="text-white-50 text-decoration-none me-3">Terms</a>
+        <a href="{{ url_for('index') }}#disclaimer" class="text-white-50 text-decoration-none">Disclaimer</a>
+      </small>
+    </div>
   </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
   <script>
-    // Password strength indicator
-    const passwordInput = document.getElementById('password');
+    // Toggle password visibility
+    document.getElementById('togglePassword')?.addEventListener('click', function() {
+      const password = document.getElementById('password');
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.querySelector('i').classList.toggle('bi-eye');
+      this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+
+    // Password strength checker
+    const password = document.getElementById('password');
     const strengthBar = document.getElementById('passwordStrength');
     
-    passwordInput.addEventListener('input', function() {
-      const password = this.value;
+    const reqLength = document.getElementById('reqLength');
+    const reqUpper = document.getElementById('reqUpper');
+    const reqLower = document.getElementById('reqLower');
+    const reqNumber = document.getElementById('reqNumber');
+    
+    function checkPasswordStrength() {
+      if (!password) return;
+      
+      const pwd = password.value;
       let strength = 0;
       
-      if (password.length >= 6) strength += 25;
-      if (/[A-Z]/.test(password)) strength += 25;
-      if (/[0-9]/.test(password)) strength += 25;
-      if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+      // Check length
+      const hasLength = pwd.length >= 8;
+      if (hasLength) {
+        strength += 25;
+        reqLength.innerHTML = '<i class="bi bi-check-circle text-success me-1"></i> 8+ characters';
+      } else {
+        reqLength.innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i> 8+ characters';
+      }
       
-      if (strength === 0) {
-        strengthBar.style.width = '0%';
+      // Check uppercase
+      const hasUpper = /[A-Z]/.test(pwd);
+      if (hasUpper) {
+        strength += 25;
+        reqUpper.innerHTML = '<i class="bi bi-check-circle text-success me-1"></i> Uppercase';
+      } else {
+        reqUpper.innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i> Uppercase';
+      }
+      
+      // Check lowercase
+      const hasLower = /[a-z]/.test(pwd);
+      if (hasLower) {
+        strength += 25;
+        reqLower.innerHTML = '<i class="bi bi-check-circle text-success me-1"></i> Lowercase';
+      } else {
+        reqLower.innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i> Lowercase';
+      }
+      
+      // Check number
+      const hasNumber = /[0-9]/.test(pwd);
+      if (hasNumber) {
+        strength += 25;
+        reqNumber.innerHTML = '<i class="bi bi-check-circle text-success me-1"></i> Number';
+      } else {
+        reqNumber.innerHTML = '<i class="bi bi-x-circle text-danger me-1"></i> Number';
+      }
+      
+      // Update strength bar
+      strengthBar.style.width = strength + '%';
+      
+      if (strength <= 25) {
         strengthBar.style.backgroundColor = '#dc3545';
       } else if (strength <= 50) {
-        strengthBar.style.width = strength + '%';
         strengthBar.style.backgroundColor = '#ffc107';
+      } else if (strength <= 75) {
+        strengthBar.style.backgroundColor = '#0dcaf0';
       } else {
-        strengthBar.style.width = strength + '%';
         strengthBar.style.backgroundColor = '#198754';
       }
+    }
+    
+    password?.addEventListener('input', checkPasswordStrength);
+    
+    // Check username availability
+    const username = document.getElementById('username');
+    const usernameAvailability = document.getElementById('usernameAvailability');
+    
+    username?.addEventListener('blur', function() {
+      const value = this.value;
+      if (value.length >= 3) {
+        // Simulate API call - in production, call your endpoint
+        usernameAvailability.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i> Username available</span>';
+      }
+    });
+    
+    // Form loading state
+    document.getElementById('registerForm')?.addEventListener('submit', function(e) {
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+      }
+    });
+
+    // Auto-format phone number
+    const phone = document.getElementById('phone');
+    phone?.addEventListener('input', function(e) {
+      let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,3})(\d{0,4})/);
+      e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
+    });
+
+    // Auto-format EIN
+    const ein = document.getElementById('ein');
+    ein?.addEventListener('input', function(e) {
+      let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,7})/);
+      e.target.value = !x[2] ? x[1] : x[1] + '-' + x[2];
+    });
+
+    // Initialize tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+      var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
     });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

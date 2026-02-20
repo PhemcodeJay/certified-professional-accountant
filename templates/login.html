@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login | Pacific Green Partners</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+  <title>Login | {{ firm_name | default('Pacific Green Partners, LLP') }}</title>
   
   <!-- Bootstrap 5.3 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"/>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
   
@@ -14,60 +14,109 @@
     :root {
       --primary: #2e7d32;
       --primary-dark: #1b5e20;
-      --secondary: #0d6efd;
+      --primary-light: #4caf50;
       --light-bg: #f8f9fa;
     }
     
     body {
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+    
+    .login-wrapper {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto;
     }
     
     .login-card {
       border: none;
       border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       overflow: hidden;
-      transition: transform 0.3s;
+      background: white;
+      animation: slideUp 0.5s ease;
     }
     
-    .login-card:hover {
-      transform: translateY(-5px);
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     .login-header {
       background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
       color: white;
-      padding: 3rem 2rem;
+      padding: 2.5rem 2rem;
       text-align: center;
+      position: relative;
+    }
+    
+    .login-header::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: white;
+      border-radius: 50% 50% 0 0;
+    }
+    
+    .login-header i {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
     
     .login-body {
-      padding: 2.5rem;
+      padding: 2.5rem 2rem;
       background: white;
     }
     
     .btn-primary {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      padding: 0.75rem 2rem;
-      border-radius: 50px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      padding: 0.875rem;
+      border-radius: 12px;
       font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
     }
     
     .btn-primary:hover {
-      background-color: var(--primary-dark);
-      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(46, 125, 50, 0.3);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
     }
     
     .form-control {
-      padding: 0.75rem 1rem;
-      border-radius: 10px;
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
       border: 2px solid #e9ecef;
       transition: all 0.3s;
+      font-size: 1rem;
     }
     
     .form-control:focus {
@@ -75,100 +124,348 @@
       box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
     }
     
+    .input-group-text {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-right: none;
+      border-radius: 12px 0 0 12px;
+      color: var(--primary);
+    }
+    
+    .input-group .form-control {
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+    }
+    
+    .input-group:focus-within .input-group-text {
+      border-color: var(--primary);
+      border-right: none;
+    }
+    
     .back-home {
       position: absolute;
       top: 20px;
       left: 20px;
-      color: var(--primary);
+      color: white;
       text-decoration: none;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px 20px;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      font-weight: 500;
+      transition: all 0.3s;
+      z-index: 10;
     }
     
     .back-home:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: white;
+      transform: translateX(-5px);
+    }
+    
+    .back-home i {
+      margin-right: 5px;
+    }
+    
+    .form-check-input:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #6c757d;
+      margin: 1.5rem 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid #dee2e6;
+    }
+    
+    .divider::before {
+      margin-right: 1rem;
+    }
+    
+    .divider::after {
+      margin-left: 1rem;
+    }
+    
+    .forgot-password {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+    
+    .forgot-password:hover {
       color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .register-link {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+    
+    .register-link:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+    
+    .security-badge {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .security-badge i {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    
+    .security-badge small {
+      color: #6c757d;
+      line-height: 1.4;
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 576px) {
+      body {
+        padding: 10px;
+      }
+      
+      .login-header {
+        padding: 2rem 1.5rem;
+      }
+      
+      .login-body {
+        padding: 2rem 1.5rem;
+      }
+      
+      .back-home {
+        top: 10px;
+        left: 10px;
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* Loading state */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      top: 50%;
+      left: 50%;
+      margin-left: -10px;
+      margin-top: -10px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Alert animations */
+    .alert {
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
 <body>
   <a href="{{ url_for('index') }}" class="back-home">
-    <i class="bi bi-arrow-left me-1"></i>Back to Home
+    <i class="bi bi-arrow-left"></i>Back to Home
   </a>
   
-  <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-md-6 col-lg-5">
-        <div class="login-card">
-          <div class="login-header">
-            <i class="bi bi-tree-fill display-4 mb-3"></i>
-            <h2>Client Portal Login</h2>
-            <p class="opacity-75 mb-0">Access your financial, tax, audit, and ESG dashboard</p>
-          </div>
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <i class="bi bi-tree-fill"></i>
+        <h2 class="h3 mb-2">Welcome Back</h2>
+        <p class="opacity-75 mb-0 small">Access your secure client portal</p>
+      </div>
+      
+      <div class="login-body">
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                <i class="bi bi-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        
+        <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+          {{ form.hidden_tag() if form }}
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token else '' }}">
           
-          <div class="login-body">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>
-                {% endfor %}
+          <div class="mb-4">
+            <label for="username" class="form-label fw-semibold">Username or Email</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-person"></i>
+              </span>
+              {{ form.username(class="form-control", placeholder="Enter your username or email", id="username", autocomplete="username", required=True) if form else '' }}
+              {% if not form %}
+              <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username or email" required autocomplete="username">
               {% endif %}
-            {% endwith %}
-            
-            <form method="POST" action="{{ url_for('login') }}">
-              {{ form.hidden_tag() }}  <!-- CSRF protection -->
-              <div class="mb-4">
-                <label for="username" class="form-label">Username or Email</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-person"></i>
-                  </span>
-                  {{ form.username(class="form-control") }}
-                </div>
-              </div>
-              
-              <div class="mb-4">
-                <label for="password" class="form-label">Password</label>
-                <div class="input-group">
-                  <span class="input-group-text bg-light">
-                    <i class="bi bi-lock"></i>
-                  </span>
-                  {{ form.password(class="form-control") }}
-                </div>
-              </div>
-              
-              <div class="mb-4 form-check">
-                <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                <label class="form-check-label" for="remember">Remember me</label>
-              </div>
-              
-              {{ form.submit(class="btn btn-primary w-100 mb-4") }}
-              
-              <div class="text-center">
-                <p class="mb-2">
-                  <a href="#" class="text-decoration-none text-primary">Forgot Password?</a>
-                </p>
-                <p>
-                  Don't have an account? 
-                  <a href="{{ url_for('register') }}" class="text-decoration-none fw-bold text-primary">Register here</a>
-                </p>
-              </div>
-            </form>
-            
-            <hr class="my-4">
-            
-            <div class="text-center">
-              <small class="text-muted">
-                <i class="bi bi-shield-check me-1"></i>
-                Secure SSL encrypted connection. For USA tax/audit services only.
-              </small>
             </div>
           </div>
+          
+          <div class="mb-3">
+            <label for="password" class="form-label fw-semibold">Password</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <i class="bi bi-lock"></i>
+              </span>
+              {{ form.password(class="form-control", placeholder="Enter your password", id="password", autocomplete="current-password", required=True) if form else '' }}
+              {% if not form %}
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+              {% endif %}
+              <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border: 2px solid #e9ecef; border-left: none;">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="remember" name="remember">
+              <label class="form-check-label small" for="remember">Remember me for 14 days</label>
+            </div>
+            <a href="{{ url_for('forgot_password') if url_for else '#' }}" class="forgot-password small">
+              <i class="bi bi-question-circle me-1"></i>Forgot Password?
+            </a>
+          </div>
+          
+          {{ form.submit(class="btn btn-primary w-100", value="Sign In") if form else '' }}
+          {% if not form %}
+          <button type="submit" class="btn btn-primary w-100" id="submitBtn">Sign In</button>
+          {% endif %}
+          
+          <div class="divider">
+            <span class="small">New to {{ firm_name | default('our firm') }}?</span>
+          </div>
+          
+          <div class="text-center">
+            <a href="{{ url_for('register') }}" class="register-link">
+              Create an account <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </form>
+        
+        <div class="security-badge">
+          <i class="bi bi-shield-lock-fill"></i>
+          <div>
+            <strong class="d-block small">Secure SSL Encrypted</strong>
+            <small class="text-muted">256-bit encryption • CPA client data protected</small>
+          </div>
+        </div>
+        
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            For USA tax and audit services only. All data is confidential.
+          </small>
         </div>
       </div>
     </div>
+    
+    <!-- Footer Links -->
+    <div class="text-center mt-4">
+      <small class="text-white-50">
+        <a href="{{ url_for('index') }}#privacy" class="text-white-50 text-decoration-none me-3">Privacy</a>
+        <a href="{{ url_for('index') }}#terms" class="text-white-50 text-decoration-none me-3">Terms</a>
+        <a href="{{ url_for('index') }}#contact" class="text-white-50 text-decoration-none">Contact</a>
+      </small>
+    </div>
   </div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword')?.addEventListener('click', function() {
+      const password = document.getElementById('password');
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      this.querySelector('i').classList.toggle('bi-eye');
+      this.querySelector('i').classList.toggle('bi-eye-slash');
+    });
+
+    // Form loading state
+    document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) {
+        submitBtn.classList.add('btn-loading');
+        submitBtn.disabled = true;
+      }
+    });
+
+    // Auto-focus username field
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('username')?.focus();
+    });
+
+    // Remember me functionality
+    if (localStorage.getItem('rememberedUser')) {
+      document.getElementById('username').value = localStorage.getItem('rememberedUser');
+      document.getElementById('remember').checked = true;
+    }
+
+    document.getElementById('loginForm')?.addEventListener('submit', function() {
+      if (document.getElementById('remember').checked) {
+        localStorage.setItem('rememberedUser', document.getElementById('username').value);
+      } else {
+        localStorage.removeItem('rememberedUser');
+      }
+    });
+
+    // Prevent double submission
+    let submitted = false;
+    document.getElementById('loginForm')?.addEventListener('submit', function(e) {
+      if (submitted) {
+        e.preventDefault();
+        return;
+      }
+      submitted = true;
+    });
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

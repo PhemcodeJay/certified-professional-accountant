@@ -2,106 +2,788 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Pacific Green Partners</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
+    <title>Admin Dashboard | {{ firm_name | default('Pacific Green Partners, LLP') }}</title>
+    
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --primary-dark: #1b5e20;
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background-color: #f5f7fa;
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.85);
+            padding: 0.75rem 1.5rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: white;
+        }
+        
+        .sidebar .nav-link i {
+            width: 24px;
+            margin-right: 10px;
+        }
+        
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 30px;
+            transition: all 0.3s;
+            min-height: 100vh;
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            border: none;
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+        }
+        
+        /* Tables */
+        .table th {
+            font-weight: 600;
+            color: #495057;
+            border-top: none;
+        }
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .badge-status {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .badge-draft { background: rgba(255, 193, 7, 0.15); color: #856404; }
+        .badge-pending { background: rgba(23, 162, 184, 0.15); color: #0c5460; }
+        .badge-review { background: rgba(108, 117, 125, 0.15); color: #383d41; }
+        .badge-complete { background: rgba(40, 167, 69, 0.15); color: #155724; }
+        
+        /* Mobile Toggle */
+        .sidebar-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            display: none;
+            background: var(--primary);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: calc(-1 * var(--sidebar-width));
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+                padding-top: 70px;
+            }
+            .main-content.active {
+                margin-left: var(--sidebar-width);
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+        
+        /* Loading Spinner */
+        .spinner-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .spinner-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Action Buttons */
+        .btn-action {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            margin: 0 2px;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Search Box */
+        .search-box {
+            max-width: 300px;
+        }
+        
+        /* Footer */
+        .admin-footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block bg-dark sidebar min-vh-100">
-                <div class="position-sticky pt-3">
-                    <h4 class="text-white px-3">Admin Panel</h4>
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link text-white" href="#dashboard">Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#clients">Clients</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#tax-filings">Tax Filings</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#audits">Audits</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#reports">Reports</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="{{ url_for('logout') }}">Logout</a></li>
-                    </ul>
-                </div>
-            </nav>
+    <!-- Loading Spinner -->
+    <div class="spinner-overlay" id="spinner">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1>Admin Dashboard</h1>
-                </div>
+    <!-- Mobile Toggle Button -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="bi bi-list fs-4"></i>
+    </button>
 
-                <!-- Stats Cards -->
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="card text-white bg-primary mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ total_clients }}</h5>
-                                <p class="card-text">Total Clients</p>
-                            </div>
-                        </div>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-tree-fill fs-2 me-3"></i>
+                <div>
+                    <h5 class="mb-0">{{ firm_name | default('Pacific Green Partners') }}</h5>
+                    <small class="opacity-75">Admin Portal</small>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex flex-column h-100">
+            <!-- Admin Info -->
+            <div class="p-3 border-bottom border-opacity-15">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle bg-white text-primary d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <i class="bi bi-shield-lock-fill fs-4"></i>
                     </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-warning mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ pending_tax }}</h5>
-                                <p class="card-text">Pending Tax Filings/Drafts</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-info mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ active_audits }}</h5>
-                                <p class="card-text">Active/Scheduled Audits</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="card text-white bg-secondary mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ unread_messages }}</h5>
-                                <p class="card-text">Unread Messages</p>
-                            </div>
-                        </div>
+                    <div class="ms-3">
+                        <h6 class="mb-0">{{ current_user.full_name | default('Admin') }}</h6>
+                        <small class="opacity-75">Administrator</small>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="flex-grow-1 p-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#clients" data-section="clients">
+                            <i class="bi bi-people"></i> Clients
+                            <span class="badge bg-warning float-end">{{ total_clients | default(0) }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tax-filings" data-section="tax">
+                            <i class="bi bi-calculator"></i> Tax Filings
+                            <span class="badge bg-info float-end">{{ pending_tax | default(0) }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#audits" data-section="audits">
+                            <i class="bi bi-shield-check"></i> Audits
+                            <span class="badge bg-primary float-end">{{ active_audits | default(0) }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#documents" data-section="documents">
+                            <i class="bi bi-folder"></i> Documents
+                            <span class="badge bg-warning float-end">{{ pending_documents | default(0) }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#messages" data-section="messages">
+                            <i class="bi bi-envelope"></i> Messages
+                            <span class="badge bg-danger float-end">{{ unread_messages | default(0) }}</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reports" data-section="reports">
+                            <i class="bi bi-bar-chart"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#settings" data-section="settings">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- Quick Actions -->
+                <div class="mt-4 pt-3 border-top border-opacity-15">
+                    <h6 class="text-uppercase opacity-75 small mb-3">Quick Actions</h6>
+                    <button class="btn btn-outline-light w-100 mb-2" onclick="window.location.href='/admin/clients/new'">
+                        <i class="bi bi-person-plus me-2"></i> Add Client
+                    </button>
+                    <button class="btn btn-outline-light w-100 mb-2" onclick="window.location.href='/admin/broadcast'">
+                        <i class="bi bi-megaphone me-2"></i> Broadcast
+                    </button>
+                    <button class="btn btn-outline-light w-100" onclick="window.location.href='/admin/backup'">
+                        <i class="bi bi-cloud-arrow-up me-2"></i> Backup
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="p-3 border-top border-opacity-15">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('portal') }}" class="text-white-50 small">
+                        <i class="bi bi-door-open me-1"></i> Switch to Portal
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="text-white-50 small">
+                        <i class="bi bi-box-arrow-right me-1"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-                <!-- Recent Tax Filings -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>Recent Tax Filings</h5>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="content-section">
+            <div class="d-flex justify-content-between flex-wrap align-items-center mb-4">
+                <div>
+                    <h1 class="h2 mb-1">Admin Dashboard</h1>
+                    <p class="text-muted">Welcome back, {{ current_user.full_name | default('Admin') }}. Here's what's happening today.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <div class="search-box">
+                        <input type="text" class="form-control" placeholder="Search clients, filings...">
                     </div>
-                    <div class="card-body">
-                        <table class="table">
+                    <button class="btn btn-primary" onclick="window.location.reload()">
+                        <i class="bi bi-arrow-repeat me-1"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card bg-primary text-white">
+                        <div class="card-body position-relative">
+                            <h3 class="mb-1">{{ total_clients | default(0) }}</h3>
+                            <p class="mb-0 opacity-75">Total Clients</p>
+                            <i class="bi bi-people stat-icon"></i>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-white-50 small">
+                            <i class="bi bi-arrow-up me-1"></i> +{{ new_clients | default(5) }} this month
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-warning text-white">
+                        <div class="card-body position-relative">
+                            <h3 class="mb-1">{{ pending_tax | default(0) }}</h3>
+                            <p class="mb-0 opacity-75">Pending Tax Filings</p>
+                            <i class="bi bi-calculator stat-icon"></i>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-white-50 small">
+                            <i class="bi bi-exclamation-triangle me-1"></i> {{ urgent_tax | default(2) }} urgent
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-info text-white">
+                        <div class="card-body position-relative">
+                            <h3 class="mb-1">{{ active_audits | default(0) }}</h3>
+                            <p class="mb-0 opacity-75">Active Audits</p>
+                            <i class="bi bi-shield-check stat-icon"></i>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-white-50 small">
+                            {{ scheduled_audits | default(3) }} scheduled this week
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card bg-danger text-white">
+                        <div class="card-body position-relative">
+                            <h3 class="mb-1">{{ unread_messages | default(0) }}</h3>
+                            <p class="mb-0 opacity-75">Unread Messages</p>
+                            <i class="bi bi-envelope stat-icon"></i>
+                        </div>
+                        <div class="card-footer bg-transparent border-0 text-white-50 small">
+                            {{ urgent_messages | default(1) }} from last 24h
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-lg-8">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Activity Overview</h5>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary active" onclick="changeChart('week')">Week</button>
+                                <button class="btn btn-outline-secondary" onclick="changeChart('month')">Month</button>
+                                <button class="btn btn-outline-secondary" onclick="changeChart('year')">Year</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="activityChart" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Quick Stats</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-stats">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>New Registrations</span>
+                                    <span class="fw-bold">{{ new_registrations | default(24) }}</span>
+                                </div>
+                                <div class="progress mb-4" style="height: 8px;">
+                                    <div class="progress-bar bg-success" style="width: 75%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Filings Completed</span>
+                                    <span class="fw-bold">{{ completed_filings | default(156) }}</span>
+                                </div>
+                                <div class="progress mb-4" style="height: 8px;">
+                                    <div class="progress-bar bg-info" style="width: 82%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Audits in Progress</span>
+                                    <span class="fw-bold">{{ active_audits | default(8) }}</span>
+                                </div>
+                                <div class="progress mb-4" style="height: 8px;">
+                                    <div class="progress-bar bg-warning" style="width: 45%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-3">
+                                    <span>Documents Pending</span>
+                                    <span class="fw-bold">{{ pending_documents | default(23) }}</span>
+                                </div>
+                                <div class="progress mb-4" style="height: 8px;">
+                                    <div class="progress-bar bg-danger" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Tax Filings -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Tax Filings</h5>
+                    <a href="#tax-filings" class="btn btn-sm btn-outline-primary" onclick="showSection('tax')">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
                                     <th>Client</th>
                                     <th>Tax Year</th>
                                     <th>Form Type</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Submitted</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for filing in recent_filings %}
-                                <tr>
-                                    <td>{{ filing[0] }}</td>
-                                    <td>{{ filing[1] }}</td>
-                                    <td>{{ filing[2] }}</td>
-                                    <td><span class="badge bg-warning">{{ filing[3] }}</span></td>
-                                    <td><a href="#" class="btn btn-sm btn-primary">Review</a></td>
-                                </tr>
-                                {% endfor %}
+                                {% if recent_filings and recent_filings|length > 0 %}
+                                    {% for filing in recent_filings %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                                    <i class="bi bi-person text-primary"></i>
+                                                </div>
+                                                <div>
+                                                    <strong>{{ filing.full_name | default('Client Name') }}</strong>
+                                                    <div class="small text-muted">{{ filing.company | default('') }}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ filing.tax_year | default('2025') }}</td>
+                                        <td>{{ filing.form_type | default('1040') }}</td>
+                                        <td>
+                                            {% if filing.status == 'draft' %}
+                                                <span class="badge-status badge-draft">Draft</span>
+                                            {% elif filing.status == 'pending' %}
+                                                <span class="badge-status badge-pending">Pending</span>
+                                            {% elif filing.status == 'in_review' %}
+                                                <span class="badge-status badge-review">In Review</span>
+                                            {% elif filing.status == 'complete' %}
+                                                <span class="badge-status badge-complete">Complete</span>
+                                            {% else %}
+                                                <span class="badge-status badge-pending">{{ filing.status | default('Pending') }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ filing.submitted_date | default('Dec 15, 2025') }}</td>
+                                        <td>
+                                            <button class="btn btn-action btn-outline-primary" onclick="reviewFiling('{{ filing.id }}')">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                            <button class="btn btn-action btn-outline-success" onclick="approveFiling('{{ filing.id }}')">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4 text-muted">
+                                            <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                            No recent tax filings
+                                        </td>
+                                    </tr>
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="alert alert-info mt-3">
-                    Note: All tax and audit data are for internal use. Ensure compliance with IRS and AICPA standards.
+            </div>
+
+            <!-- Recent Activity & Clients -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white">
+                            <h5 class="mb-0">Recent Activity</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if recent_activity and recent_activity|length > 0 %}
+                                    {% for activity in recent_activity %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="me-3">
+                                                <i class="bi bi-{{ activity.icon | default('circle') }} fs-5 text-{{ activity.color | default('secondary') }}"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <strong>{{ activity.action | default('Activity') }}</strong>
+                                                    <small class="text-muted">{{ activity.timestamp | default('2 hours ago') }}</small>
+                                                </div>
+                                                <div class="small text-muted">{{ activity.details | default('') }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="list-group-item text-center py-4 text-muted">
+                                        <i class="bi bi-clock-history fs-2 d-block mb-2"></i>
+                                        No recent activity
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </main>
-        </div>
-    </div>
+                
+                <div class="col-lg-6">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Recent Clients</h5>
+                            <a href="#clients" class="btn btn-sm btn-outline-primary" onclick="showSection('clients')">View All</a>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="list-group list-group-flush">
+                                {% if recent_clients and recent_clients|length > 0 %}
+                                    {% for client in recent_clients %}
+                                    <div class="list-group-item">
+                                        <div class="d-flex align-items-center">
+                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                                <i class="bi bi-person text-primary"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <strong>{{ client.full_name | default('Client') }}</strong>
+                                                    <small class="text-muted">{{ client.created_at | default('Today') }}</small>
+                                                </div>
+                                                <div class="small text-muted">{{ client.company | default('Individual') }} • {{ client.email | default('') }}</div>
+                                            </div>
+                                            <button class="btn btn-sm btn-outline-primary ms-2">
+                                                <i class="bi bi-envelope"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <div class="list-group-item text-center py-4 text-muted">
+                                        <i class="bi bi-people fs-2 d-block mb-2"></i>
+                                        No recent clients
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="alert alert-info mt-4">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Note:</strong> All tax and audit data are for internal use only. Ensure compliance with IRS, AICPA, and professional standards. All actions are logged for audit purposes.
+            </div>
+            
+            <!-- Footer -->
+            <div class="admin-footer text-center">
+                <small>
+                    &copy; 2025 {{ firm_name | default('Pacific Green Partners, LLP') }}. All rights reserved.<br>
+                    CPA License: {{ cpa_license | default('CPA License #123456') }} | AICPA Member
+                </small>
+            </div>
+        </section>
+
+        <!-- Other sections will be shown via JavaScript -->
+        <section id="clients" class="content-section" style="display: none;">
+            <h2>Client Management</h2>
+            <!-- Content will be loaded dynamically -->
+        </section>
+        
+        <section id="tax" class="content-section" style="display: none;">
+            <h2>Tax Filings</h2>
+            <!-- Content will be loaded dynamically -->
+        </section>
+        
+        <section id="audits" class="content-section" style="display: none;">
+            <h2>Audit Management</h2>
+            <!-- Content will be loaded dynamically -->
+        </section>
+    </main>
+
+    <script>
+        // Initialize chart
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            window.activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Tax Filings',
+                        data: [12, 19, 15, 17, 24, 8, 5],
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Audits',
+                        data: [5, 7, 9, 8, 12, 3, 2],
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+
+        // Loading spinner
+        window.addEventListener('beforeunload', function() {
+            document.getElementById('spinner').classList.add('show');
+        });
+
+        window.addEventListener('load', function() {
+            document.getElementById('spinner').classList.remove('show');
+        });
+
+        // Sidebar toggle for mobile
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('mainContent').classList.toggle('active');
+        });
+
+        // Section navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById(sectionId).style.display = 'block';
+            
+            document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`.sidebar .nav-link[data-section="${sectionId}"]`).classList.add('active');
+        }
+
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sectionId = this.getAttribute('data-section');
+                if (sectionId) {
+                    showSection(sectionId);
+                }
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.getElementById('mainContent').classList.remove('active');
+                }
+            });
+        });
+
+        // Chart period change
+        function changeChart(period) {
+            const chart = window.activityChart;
+            if (period === 'week') {
+                chart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                chart.data.datasets[0].data = [12, 19, 15, 17, 24, 8, 5];
+                chart.data.datasets[1].data = [5, 7, 9, 8, 12, 3, 2];
+            } else if (period === 'month') {
+                chart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+                chart.data.datasets[0].data = [85, 92, 78, 96];
+                chart.data.datasets[1].data = [32, 28, 35, 41];
+            } else {
+                chart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+                chart.data.datasets[0].data = [320, 350, 380, 410, 390, 420];
+                chart.data.datasets[1].data = [145, 152, 168, 175, 182, 190];
+            }
+            chart.update();
+            
+            // Update active button
+            document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // Action functions
+        function reviewFiling(id) {
+            window.location.href = `/admin/tax/${id}/review`;
+        }
+
+        function approveFiling(id) {
+            if (confirm('Are you sure you want to approve this filing?')) {
+                window.location.href = `/admin/tax/${id}/approve`;
+            }
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl + D for dashboard
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                showSection('dashboard');
+            }
+            // Ctrl + C for clients
+            if (e.ctrlKey && e.key === 'c') {
+                e.preventDefault();
+                showSection('clients');
+            }
+            // Ctrl + T for tax
+            if (e.ctrlKey && e.key === 't') {
+                e.preventDefault();
+                showSection('tax');
+            }
+        });
+
+        // Auto-refresh data every 5 minutes
+        setInterval(function() {
+            if (!document.hidden) {
+                location.reload();
+            }
+        }, 300000);
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
