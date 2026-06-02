@@ -1,3 +1,5 @@
 /.env
 app.py
 users.db
+app.log
+users.db
